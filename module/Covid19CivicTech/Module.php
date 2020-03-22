@@ -2,6 +2,7 @@
 namespace Covid19CivicTech;
 
 use Covid19CivicTech\V1\Rest\Country;
+use Covid19CivicTech\V1\Rest\Group;
 use Laminas\ApiTools\Provider\ApiToolsProviderInterface;
 use Laminas\Db\ResultSet\HydratingResultSet;
 use Laminas\Db\TableGateway\TableGateway;
@@ -53,7 +54,21 @@ class Module implements ApiToolsProviderInterface, ServiceProviderInterface
 
                     $tableGateway = new TableGateway('country', $dbAdapter, null, $resultSetPrototype);
 
-                    return new Country\Model\DatabaseRepository($tableGateway);
+                    return new Country\Model\DatabaseRepository(
+                        $tableGateway,
+                        $serviceManager->get(Group\Model\RepositoryInterface::class)
+                    );
+                },
+                Group\Model\RepositoryInterface::class => function (ServiceManager $serviceManager) {
+                    $dbAdapter = $serviceManager->get('DbAdapterApi');
+
+                    $resultSetPrototype = new HydratingResultSet();
+                    $resultSetPrototype->setHydrator(new ObjectPropertyHydrator());
+                    $resultSetPrototype->setObjectPrototype(new Group\GroupEntity());
+
+                    $tableGateway = new TableGateway('group', $dbAdapter, null, $resultSetPrototype);
+
+                    return new Group\Model\DatabaseRepository($tableGateway);
                 }
             ]
         ];

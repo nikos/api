@@ -8,7 +8,7 @@ interface RepositoryInterface
     /**
      * @return CountryEntity[]
      */
-    public function fetchAllOrderedByName();
+    public function fetchAllWithGroupsOrderedByName();
 
     /**
      * @param int $id

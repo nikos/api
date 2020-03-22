@@ -36,6 +36,6 @@ class CountryResource extends AbstractResourceListener
      */
     public function fetchAll($params = [])
     {
-        return $this->repository->fetchAllOrderedByName();
+        return $this->repository->fetchAllWithGroupsOrderedByName();
     }
 }
