@@ -75,6 +75,13 @@ abstract class AbstractDatabaseRepository
         return new DbSelect($select, $sql, $resultSetPrototype);
     }
 
+    protected function getEnhanceableItemPaginatorAdapterForSelect(Select $select)
+    {
+        $sql = $this->tableGateway->getSql();
+        $resultSetPrototype = $this->tableGateway->getResultSetPrototype();
+
+        return new EnhanceableItemsDbSelectAdapter($select, $sql, $resultSetPrototype);
+    }
     /**
      * @param Where $where
      * @return array

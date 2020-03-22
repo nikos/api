@@ -6,7 +6,6 @@ namespace Covid19CivicTech\V1\Rest\Country\Model;
 
 use Application\Model\AbstractDatabaseRepository;
 use Laminas\Db\Sql\Where;
-use Laminas\Db\TableGateway\TableGateway;
 
 class DatabaseRepository extends AbstractDatabaseRepository implements RepositoryInterface
 {

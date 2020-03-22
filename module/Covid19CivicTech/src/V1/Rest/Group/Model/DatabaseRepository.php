@@ -1,6 +1,5 @@
 <?php
 
-
 namespace Covid19CivicTech\V1\Rest\Group\Model;
 
 
@@ -13,7 +12,10 @@ use Laminas\Db\TableGateway\TableGateway;
 
 class DatabaseRepository extends AbstractDatabaseRepository implements RepositoryInterface
 {
-    private $filters = [];
+    private $collectionFilters = [];
+
+    private $collectionCountriesIndexedById = [];
+
     /**
      * @var \Covid19CivicTech\V1\Rest\Country\Model\RepositoryInterface
      */
@@ -60,7 +62,7 @@ class DatabaseRepository extends AbstractDatabaseRepository implements Repositor
 
     public function addFilterByCountryForCollection(int $countryId)
     {
-        $this->filters['country_id'] = $countryId;
+        $this->collectionFilters['country_id'] = $countryId;
     }
 
     public function getCollection(): GroupCollection
@@ -68,19 +70,47 @@ class DatabaseRepository extends AbstractDatabaseRepository implements Repositor
         $select = $this->getSelect();
         $select->where($this->buildWhereForCollection());
 
-        return new GroupCollection($this->getPaginatorAdapterForSelect($select));
+        $this->collectionCountriesIndexedById = [];
+        $paginatorAdapter = $this->getEnhanceableItemPaginatorAdapterForSelect($select);
+        $paginatorAdapter->setBeforeEnhanceItemsCallback(function ($groups) {
+            $this->collectionCountriesIndexedById = $this->fetchAllCountriesIndexedByIdForGroups($groups);
+        });
+        $paginatorAdapter->setEnhanceItemFunction(function(GroupEntity $group) {
+            if ($group->countryId && isset($this->collectionCountriesIndexedById[$group->countryId])) {
+                $group->country = $this->collectionCountriesIndexedById[$group->countryId];
+            }
+            return $group;
+        });
+
+        return new GroupCollection($paginatorAdapter);
     }
 
     private function buildWhereForCollection()
     {
         $where = new Where();
 
-        if (isset($this->filters['country_id'])) {
-            $where->equalTo('country_id', $this->filters['country_id']);
+        if (isset($this->collectionFilters['country_id'])) {
+            $where->equalTo('country_id', $this->collectionFilters['country_id']);
         }
 
         return $where;
     }
 
+    /**
+     * @param GroupEntity[] $groups
+     */
+    private function fetchAllCountriesIndexedByIdForGroups(array $groups)
+    {
+        $countryIds = array_filter(array_map(function (GroupEntity $group) {
+            return $group->countryId;
+        }, $groups));
 
+        $countries = $this->countryRepository->fetchAllByIdsOrderedByName($countryIds);
+        $countriesIndexedById = [];
+        foreach ($countries as $country) {
+            $countriesIndexedById[$country->id] = $country;
+        }
+
+        return $countriesIndexedById;
+    }
 }

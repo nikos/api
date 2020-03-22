@@ -1,11 +1,22 @@
 <?php
 namespace Covid19CivicTech\V1\Rest\Topic;
 
+use Covid19CivicTech\V1\Rest\Topic\Model\RepositoryInterface;
 use Laminas\ApiTools\ApiProblem\ApiProblem;
 use Laminas\ApiTools\Rest\AbstractResourceListener;
 
 class TopicResource extends AbstractResourceListener
 {
+    /**
+     * @var RepositoryInterface
+     */
+    private $repository;
+
+    public function __construct(RepositoryInterface $repository)
+    {
+        $this->repository = $repository;
+    }
+
     /**
      * Fetch a resource
      *
@@ -14,7 +25,7 @@ class TopicResource extends AbstractResourceListener
      */
     public function fetch($id)
     {
-        return new ApiProblem(405, 'The GET method has not been defined for individual resources');
+        return $this->repository->fetchById($id);
     }
 
     /**
@@ -25,6 +36,6 @@ class TopicResource extends AbstractResourceListener
      */
     public function fetchAll($params = [])
     {
-        return new ApiProblem(405, 'The GET method has not been defined for collections');
+        return $this->repository->fetchAll();
     }
 }
