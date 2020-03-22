@@ -47,7 +47,7 @@ resource "aws_ecs_cluster" "web" {
 
 
 data "aws_ecr_repository" "c19-registry" {
-  name = "covid19-civitech"
+  name = "civitech/covid-19-civitech"
 }
 
 

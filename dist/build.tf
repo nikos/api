@@ -20,31 +20,38 @@ module "codecommit-cicd" {
   force_artifact_destroy    = "true"                                                                           # Default value
 }
 
+data "aws_iam_policy_document" "codepipeline_ecr_policy" {
+  statement {
+    sid = "1"
 
-resource "aws_iam_role_policy" "codebuild_policy" {
-  name = "serverless-codebuild-automation-policy"
-  role = module.codecommit-cicd.codebuild_role
-
-  policy = <<POLICY
-{
-  "Version": "2012-10-17",
-  "Statement": [
-    {
-      "Action": [
+    actions = [
         "ecr:BatchCheckLayerAvailability",
         "ecr:CompleteLayerUpload",
         "ecr:GetAuthorizationToken",
         "ecr:InitiateLayerUpload",
         "ecr:PutImage",
         "ecr:UploadLayerPart"
-      ],
-      "Resource": "aws_ecr_repository.registry.arn",
-      "Effect": "Allow"
-    }
-  ]
+    ]
+
+    resources = [
+      aws_ecr_repository.registry.arn,
+    ]
+  }
 }
-POLICY
+
+
+resource "aws_iam_policy" "codebuild_policy" {
+  name = "serverless-codebuild-automation-policy"
+  path = "/"
+  policy = data.aws_iam_policy_document.codepipeline_ecr_policy.json
 }
+
+resource "aws_iam_policy_attachment" "codebuild_allow_ecr" {
+  name       = "codebuild_ecr_attachment"
+  roles      = [module.codecommit-cicd.codepipeline_role, module.codecommit-cicd.codebuild_role]
+  policy_arn = aws_iam_policy.codebuild_policy.arn
+}
+
 
 output "repo_url" {
   value      = module.codecommit-cicd.clone_repo_ssh
