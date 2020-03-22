@@ -47,8 +47,8 @@ resource "aws_iam_policy" "codebuild_policy" {
 }
 
 resource "aws_iam_policy_attachment" "codebuild_allow_ecr" {
-  name       = "codebuild_ecr_attachment"
-  roles      = [module.codecommit-cicd.codepipeline_role, module.codecommit-cicd.codebuild_role]
+  name       = "allow-ecr"
+  roles      = ["civitech-codebuild-role", "civitech-codepipeline-role"]
   policy_arn = aws_iam_policy.codebuild_policy.arn
 }
 
