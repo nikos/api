@@ -3,7 +3,7 @@ variable "image_name" {
 }
 
 module "codecommit-cicd" {
-  source                    = "git::git@github.com:covid19-civictechTEAM/api.gitref=aws"
+  source                    = "git::git@github.com:raben2/api.git?ref=aws"
   repo_name                 = "civitech"                                                             # Required
   organization_name         = "covid19-civitech"                                                                  # Required
   repo_default_branch       = "master"                                                                         # Default value
