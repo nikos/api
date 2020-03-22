@@ -13,7 +13,7 @@ provider "aws" {
 
 resource "random_string" "password_main" {
   length           = 16
-  special          = true
+  special          = false
   min_lower        = 1
   min_upper        = 1
   min_special      = 1
@@ -27,7 +27,7 @@ resource "aws_rds_cluster" "db" {
   availability_zones      = ["us-east-1a", "us-east-1b", "us-east-1c"]
   database_name           = "civitech"
   master_username         = "app"
-  master_password         = "(length(var.password) > 0) ? var.password : random_string.password_main.result"
+  master_password         = (length(var.password) > 0) ? var.password : random_string.password_main.result
   backup_retention_period = 5
   preferred_backup_window = "07:00-09:00"
 }
@@ -56,6 +56,13 @@ data "aws_ecr_repository" "c19-registry" {
 
 output "main_db_credentials" {
   value = {
-    password = "(length(var.password) > 0) ? var.password : random_string.password_main.result"
+    password = (length(var.password) > 0) ? var.password : random_string.password_main.result
   }
+}
+
+
+### Variables
+variable "password" {
+    type = string
+    default = ""
 }
