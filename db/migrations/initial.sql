@@ -10,7 +10,7 @@ SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='TRADITIONAL,ALLOW_INVALID_DATES';
 CREATE TABLE IF NOT EXISTS `country` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `name` VARCHAR(255) NOT NULL,
-  `iso_3166_code` VARCHAR(3) NOT NULL,
+  `iso_3166_code` VARCHAR(2) NOT NULL,
   PRIMARY KEY (`id`))
 ENGINE = InnoDB;
 
@@ -23,7 +23,6 @@ CREATE TABLE IF NOT EXISTS `group` (
   `name` VARCHAR(500) NOT NULL,
   `description` TEXT NOT NULL,
   `country_id` INT UNSIGNED NULL,
-  `type` ENUM('SLACK', 'DISCORD', 'TELEGRAM', 'OTHER') NOT NULL,
   PRIMARY KEY (`id`),
   INDEX `fk_group_country1_idx` (`country_id` ASC),
   CONSTRAINT `fk_group_country1`
