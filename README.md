@@ -1,5 +1,8 @@
-##development
+## Requirements
+- [docker]('https://www.docker.com')
+##Development
 
+### Initialize
 * clone this repository
 * change directory to repository root
 * `cp .env.template .env`
@@ -14,4 +17,4 @@
 The api can be accessed through http://localhost:8080 (or whatever `HOST_HTTP_PORT` you set in .env).
 The mysql database can be accessed through localhost:3306 (or whatever `HOST_MYSQL_PORT` you set in .env)
 
-  
+> For unix based os, you can simply run `make init` to initialize and `make run` to spin up the environment.
