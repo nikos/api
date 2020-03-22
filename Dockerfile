@@ -1,27 +1,7 @@
-#
-# Use this dockerfile to run api-tools.
-#
-# Start the server using docker-compose:
-#
-#   docker-compose build
-#   docker-compose up
-#
-# You can install dependencies via the container:
-#
-#   docker-compose run api-tools composer install
-#
-# You can manipulate dev mode from the container:
-#
-#   docker-compose run api-tools composer development-enable
-#   docker-compose run api-tools composer development-disable
-#   docker-compose run api-tools composer development-status
-#
-# OR use plain old docker 
-#
-#   docker build -f Dockerfile-dev -t api-tools .
-#   docker run -it -p "8080:80" -v $PWD:/var/www api-tools
-#
-FROM php:7.2-apache
+##
+## base
+##
+FROM php:7.2-apache as base
 
 RUN apt-get update \
  && apt-get install -y git zlib1g-dev \
@@ -32,6 +12,24 @@ RUN apt-get update \
  && curl -sS https://getcomposer.org/installer \
   | php -- --install-dir=/usr/local/bin --filename=composer \
  && echo "AllowEncodedSlashes On" >> /etc/apache2/apache2.conf
+
+ARG WWW_DATA_USER_ID
+ARG WWW_DATA_GROUP_ID
+
+RUN usermod -u ${WWW_DATA_USER_ID} www-data && groupmod -g ${WWW_DATA_GROUP_ID} www-data
+
+WORKDIR /var/www
+
+##
+## development
+##
+FROM base AS development
+
+# install xdebug
+RUN apt-get update && \
+    pecl install xdebug  && \
+    docker-php-ext-enable xdebug
+COPY ./dev_environment/docker/xdebug.ini ${PHP_INI_DIR}/conf.d/xdebug.ini
 
 ARG WWW_DATA_USER_ID
 ARG WWW_DATA_GROUP_ID
