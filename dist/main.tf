@@ -60,7 +60,12 @@ output "main_db_credentials" {
   }
 }
 
-
+output "ecr_image_respository_url" {
+  value      = aws_ecr_repository.registry.repository_url
+}
+output "ecr_image_respository_arn" {
+  value      = aws_ecr_repository.registry.arn
+}
 ### Variables
 variable "password" {
     type = string

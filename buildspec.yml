@@ -11,7 +11,7 @@ phases:
     commands:
       - echo build Docker image on `date`
       - docker build -t covid-19-civitech:latest -f Dockerfile_live .
-      - docker tag 434375925282.dkr.ecr.us-east-1.amazonaws.com/civitech/covid-19-civitech:latest
+      - docker tag covid-19-civitech:latest 434375925282.dkr.ecr.us-east-1.amazonaws.com/civitech/covid-19-civitech:latest
   post_build:
     commands:
       - echo build Docker image complete `date`

@@ -20,6 +20,32 @@ module "codecommit-cicd" {
   force_artifact_destroy    = "true"                                                                           # Default value
 }
 
+
+resource "aws_iam_role_policy" "codebuild_policy" {
+  name = "serverless-codebuild-automation-policy"
+  role = module.codecommit-cicd.codebuild_role
+
+  policy = <<POLICY
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Action": [
+        "ecr:BatchCheckLayerAvailability",
+        "ecr:CompleteLayerUpload",
+        "ecr:GetAuthorizationToken",
+        "ecr:InitiateLayerUpload",
+        "ecr:PutImage",
+        "ecr:UploadLayerPart"
+      ],
+      "Resource": "aws_ecr_repository.registry.arn",
+      "Effect": "Allow"
+    }
+  ]
+}
+POLICY
+}
+
 output "repo_url" {
   value      = module.codecommit-cicd.clone_repo_ssh
 }
@@ -32,6 +58,3 @@ output "codebuild_role" {
   value      = module.codecommit-cicd.codebuild_role
 }
 
-output "ecr_image_respository_url" {
-  value      = aws_ecr_repository.registry.repository_url
-}
