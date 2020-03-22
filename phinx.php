@@ -16,7 +16,7 @@ $adapter = new \Laminas\Db\Adapter\Adapter([
 return [
     'paths' => [
         'migrations' => __DIR__ . '/db/migrations',
-        'seeds' => __DIR__ . 'db/seeds',
+        'seeds' => __DIR__ . '/db/seeds',
     ],
     'environments' => [
         'default_database' => 'default',

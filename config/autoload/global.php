@@ -1,18 +1,18 @@
 <?php
-
-/**
- * @see       https://github.com/laminas-api-tools/api-tools-skeleton for the canonical source repository
- * @copyright https://github.com/laminas-api-tools/api-tools-skeleton/blob/master/COPYRIGHT.md
- * @license   https://github.com/laminas-api-tools/api-tools-skeleton/blob/master/LICENSE.md New BSD License
- */
-
 return [
     'api-tools-content-negotiation' => [
         'selectors' => [],
     ],
     'db' => [
         'adapters' => [
-            'dummy' => [],
+            'DbAdapterApi' => [
+                'database' => env('MYSQL_DATABASE'),
+                'driver' => 'PDO_Mysql',
+                'hostname' => env('MYSQL_HOSTNAME'),
+                'username' => env('MYSQL_USER'),
+                'password' => env('MYSQL_PASSWORD'),
+                'port' => env('MYSQL_PORT'),
+            ],
         ],
     ],
 ];

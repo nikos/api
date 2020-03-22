@@ -1,0 +1,105 @@
+{
+	"info": {
+		"_postman_id": "7a0fb2d4-8111-4006-a7dd-2aac88cbae7d",
+		"name": "Covid19CivicTechList dev",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "get country",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/country/1{{queryParams}}",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"country",
+						"1{{queryParams}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get countries",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/country{{queryParams}}",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"country{{queryParams}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get groups",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/group{{queryParams}}&country_id=1",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"group{{queryParams}}&country_id=1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get group",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/group/1{{queryParams}}",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"group",
+						"1{{queryParams}}"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"id": "f9bc8628-8029-4d59-85d5-546e57d954bb",
+				"type": "text/javascript",
+				"exec": [
+					"const validEnvironments = ['Covid19CivicTechList Dev'];",
+					"if (validEnvironments.indexOf(pm.environment.name) == -1) {",
+					"    throw new Error('Invalid environment. Please set environment to one of \"' + validEnvironments.join('\", \"') + '\".');",
+					"}"
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"id": "f45fac48-5618-41fe-adc7-4a9824af87ee",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"protocolProfileBehavior": {}
+}

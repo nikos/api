@@ -1,4 +1,8 @@
-##development
+# Covid19 Civic Tech Api
+
+Based on https://github.com/laminas-api-tools/api-tools-skeleton.
+
+## development
 
 * clone this repository
 * change directory to repository root
@@ -10,6 +14,7 @@
 * `docker-compose run api composer development-enable`
 * `docker-compose up`
 * `docker-compose run api vendor/bin/phinx migrate`
+* `docker-compose run api vendor/bin/phinx seed:run`
 
 The api can be accessed through http://localhost:8080 (or whatever `HOST_HTTP_PORT` you set in .env).
 The mysql database can be accessed through localhost:3306 (or whatever `HOST_MYSQL_PORT` you set in .env)
