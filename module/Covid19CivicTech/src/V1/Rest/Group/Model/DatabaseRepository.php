@@ -16,6 +16,7 @@ class DatabaseRepository extends AbstractDatabaseRepository implements Repositor
 
     private $collectionCountriesIndexedById = [];
     private $collectionTopicsIndexedByGroupId = [];
+    private $collectionServiceLinksIndexedByGroupId = [];
 
     /**
      * @var \Covid19CivicTech\V1\Rest\Country\Model\RepositoryInterface
@@ -25,14 +26,20 @@ class DatabaseRepository extends AbstractDatabaseRepository implements Repositor
      * @var \Covid19CivicTech\V1\Rest\Topic\Model\RepositoryInterface
      */
     private $topicRepository;
+    /**
+     * @var \Covid19CivicTech\V1\Rest\ServiceLink\Model\RepositoryInterface
+     */
+    private $serviceLinkRepository;
 
     public function __construct(
         TableGateway $tableGateway,
         \Covid19CivicTech\V1\Rest\Country\Model\RepositoryInterface $countryRepository,
-        \Covid19CivicTech\V1\Rest\Topic\Model\RepositoryInterface $topicRepository
+        \Covid19CivicTech\V1\Rest\Topic\Model\RepositoryInterface $topicRepository,
+        \Covid19CivicTech\V1\Rest\ServiceLink\Model\RepositoryInterface $serviceLinkRepository
     ) {
         $this->countryRepository = $countryRepository;
         $this->topicRepository = $topicRepository;
+        $this->serviceLinkRepository = $serviceLinkRepository;
 
         parent::__construct($tableGateway);
     }
@@ -71,6 +78,11 @@ class DatabaseRepository extends AbstractDatabaseRepository implements Repositor
             $group->topics = $topics[$group->id];
         }
 
+        $serviceLinks = $this->serviceLinkRepository->fetchAllByGroupId($group->id);
+        if (! empty($serviceLinks)) {
+            $group->serviceLinks = $serviceLinks;
+        }
+
         return $group;
     }
 
@@ -88,7 +100,12 @@ class DatabaseRepository extends AbstractDatabaseRepository implements Repositor
         $paginatorAdapter = $this->getEnhanceableItemPaginatorAdapterForSelect($select);
         $paginatorAdapter->setBeforeEnhanceItemsCallback(function ($groups) {
             $this->collectionCountriesIndexedById = $this->fetchAllCountriesIndexedByIdForGroups($groups);
-            $this->collectionTopicsIndexedByGroupId = $this->fetchAllTopicsGroupedByGroupIdForGroups($groups);
+
+            $groupIds = array_map(function (GroupEntity $group) {
+                return $group->id;
+            }, $groups);
+            $this->collectionTopicsIndexedByGroupId = $this->topicRepository->fetchAllForGroupIdsIndexedByGroupId($groupIds);
+            $this->collectionServiceLinksIndexedByGroupId = $this->serviceLinkRepository->fetchAllForGroupIdsIndexedByGroupId($groupIds);
         });
         $paginatorAdapter->setEnhanceItemFunction(function(GroupEntity $group) {
             if ($group->countryId && isset($this->collectionCountriesIndexedById[$group->countryId])) {
@@ -96,6 +113,9 @@ class DatabaseRepository extends AbstractDatabaseRepository implements Repositor
             }
             if (! empty($this->collectionTopicsIndexedByGroupId[$group->id])) {
                 $group->topics = $this->collectionTopicsIndexedByGroupId[$group->id];
+            }
+            if (! empty($this->collectionServiceLinksIndexedByGroupId[$group->id])) {
+                $group->serviceLinks = $this->collectionServiceLinksIndexedByGroupId[$group->id];
             }
             return $group;
         });
@@ -130,17 +150,5 @@ class DatabaseRepository extends AbstractDatabaseRepository implements Repositor
         }
 
         return $countriesIndexedById;
-    }
-
-    /**
-     * @param GroupEntity[] $groups
-     */
-    private function fetchAllTopicsGroupedByGroupIdForGroups($groups)
-    {
-        $groupIds = array_map(function (GroupEntity $group) {
-            return $group->id;
-        }, $groups);
-
-        return $this->topicRepository->fetchAllForGroupIdsIndexedByGroupId($groupIds);
     }
 }
