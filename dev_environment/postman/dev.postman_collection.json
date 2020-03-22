@@ -41,17 +41,52 @@
 			"response": []
 		},
 		{
+			"name": "get topic",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/topic/1{{queryParams}}",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"topic",
+						"1{{queryParams}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get topics",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/topic{{queryParams}}",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"topic{{queryParams}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
 			"name": "get groups",
 			"request": {
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "{{baseUrl}}/group{{queryParams}}&country_id=1",
+					"raw": "{{baseUrl}}/group{{queryParams}}&countryId=1",
 					"host": [
 						"{{baseUrl}}"
 					],
 					"path": [
-						"group{{queryParams}}&country_id=1"
+						"group{{queryParams}}&countryId=1"
 					]
 				}
 			},
@@ -63,13 +98,48 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "{{baseUrl}}/group/1{{queryParams}}",
+					"raw": "{{baseUrl}}/group/3{{queryParams}}",
 					"host": [
 						"{{baseUrl}}"
 					],
 					"path": [
 						"group",
+						"3{{queryParams}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get service link",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/service-link/1{{queryParams}}",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"service-link",
 						"1{{queryParams}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get service links",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/service-link{{queryParams}}",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"service-link{{queryParams}}"
 					]
 				}
 			},
