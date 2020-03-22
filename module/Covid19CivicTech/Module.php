@@ -68,7 +68,8 @@ class Module implements ApiToolsProviderInterface, ServiceProviderInterface
 
                     return new Group\Model\DatabaseRepository(
                         $tableGateway,
-                        $serviceManager->get(Country\Model\RepositoryInterface::class)
+                        $serviceManager->get(Country\Model\RepositoryInterface::class),
+                        $serviceManager->get(Topic\Model\RepositoryInterface::class)
                     );
                 },
                 Topic\Model\RepositoryInterface::class => function (ServiceManager $serviceManager) {
