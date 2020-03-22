@@ -8,10 +8,27 @@
 
 namespace Application;
 
-class Module
+use Application\Console\ImportFromCsvCommand;
+use Laminas\ModuleManager\Feature\ServiceProviderInterface;
+use Laminas\ServiceManager\ServiceManager;
+
+class Module implements ServiceProviderInterface
 {
     public function getConfig()
     {
         return include __DIR__ . '/../config/module.config.php';
+    }
+
+    public function getServiceConfig()
+    {
+        return [
+            'factories'=> [
+                ImportFromCsvCommand::class => function (ServiceManager $serviceManager) {
+                    $dbAdapter = $serviceManager->get('DbAdapterApi');
+
+                    return new ImportFromCsvCommand($dbAdapter);
+                }
+            ]
+        ];
     }
 }

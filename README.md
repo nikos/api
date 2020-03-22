@@ -16,6 +16,7 @@ Based on https://github.com/laminas-api-tools/api-tools-skeleton.
 * `docker-compose up`
 * `docker-compose run api vendor/bin/phinx migrate`
 * `docker-compose run api vendor/bin/phinx seed:run`
+* `docker-compose run api php bin/console.php import-from-csv dev_environment/data/input.csv`
 
 The api can be accessed through http://localhost:8080 (or whatever `HOST_HTTP_PORT` you set in .env).
 The mysql database can be accessed through localhost:3306 (or whatever `HOST_MYSQL_PORT` you set in .env)
