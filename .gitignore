@@ -7,3 +7,4 @@ config/development.config.php
 data/cache/*
 .env
 .idea
+.terraform

@@ -3,7 +3,7 @@ services:
   api:
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile_dev
       args:
         - WWW_DATA_USER_ID
         - WWW_DATA_GROUP_ID
