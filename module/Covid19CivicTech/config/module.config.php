@@ -86,7 +86,9 @@ return [
             'collection_http_methods' => [
                 0 => 'GET',
             ],
-            'collection_query_whitelist' => [],
+            'collection_query_whitelist' => [
+                0 => 'countryId',
+            ],
             'page_size' => 25,
             'page_size_param' => null,
             'entity_class' => \Covid19CivicTech\V1\Rest\Group\GroupEntity::class,
@@ -227,6 +229,33 @@ return [
                 'route_name' => 'covid19-civic-tech.rest.topic',
                 'route_identifier_name' => 'topic_id',
                 'is_collection' => true,
+            ],
+        ],
+    ],
+    'api-tools-content-validation' => [
+        'Covid19CivicTech\\V1\\Rest\\Group\\Controller' => [
+            'GET' => 'Covid19CivicTech\\V1\\Rest\\Group\\Validator\\GET',
+        ],
+    ],
+    'input_filter_specs' => [
+        'Covid19CivicTech\\V1\\Rest\\Group\\Validator\\GET' => [
+            0 => [
+                'required' => false,
+                'validators' => [
+                    0 => [
+                        'name' => \Laminas\Validator\Regex::class,
+                        'options' => [
+                            'pattern' => '/^[0-9]+$/',
+                        ],
+                    ],
+                ],
+                'filters' => [
+                    0 => [
+                        'name' => \Zend\Filter\StringTrim::class,
+                        'options' => [],
+                    ],
+                ],
+                'name' => 'countryId',
             ],
         ],
     ],

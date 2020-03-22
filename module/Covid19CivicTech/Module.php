@@ -38,7 +38,7 @@ class Module implements ApiToolsProviderInterface, ServiceProviderInterface
                 Country\Model\RepositoryInterface::class => function (ServiceManager $serviceManager) {
                     $dbAdapter = $serviceManager->get('DbAdapterApi');
 
-                    $hydrator = new ObjectPropertyHydrator();
+                    $hydrator = $this->getDefaultDatabaseHydrator();
                     $mapNamingStrategy = MapNamingStrategy::createFromExtractionMap(['iso3166Code' => 'iso_3166_code']);
                     $hydrator->setNamingStrategy(new CompositeNamingStrategy(
                         [
@@ -54,23 +54,31 @@ class Module implements ApiToolsProviderInterface, ServiceProviderInterface
 
                     $tableGateway = new TableGateway('country', $dbAdapter, null, $resultSetPrototype);
 
-                    return new Country\Model\DatabaseRepository(
-                        $tableGateway,
-                        $serviceManager->get(Group\Model\RepositoryInterface::class)
-                    );
+                    return new Country\Model\DatabaseRepository($tableGateway);
                 },
                 Group\Model\RepositoryInterface::class => function (ServiceManager $serviceManager) {
                     $dbAdapter = $serviceManager->get('DbAdapterApi');
 
                     $resultSetPrototype = new HydratingResultSet();
-                    $resultSetPrototype->setHydrator(new ObjectPropertyHydrator());
+                    $resultSetPrototype->setHydrator($this->getDefaultDatabaseHydrator());
                     $resultSetPrototype->setObjectPrototype(new Group\GroupEntity());
 
                     $tableGateway = new TableGateway('group', $dbAdapter, null, $resultSetPrototype);
 
-                    return new Group\Model\DatabaseRepository($tableGateway);
+                    return new Group\Model\DatabaseRepository(
+                        $tableGateway,
+                        $serviceManager->get(Country\Model\RepositoryInterface::class)
+                    );
                 }
             ]
         ];
+    }
+
+    private function getDefaultDatabaseHydrator()
+    {
+        $hydrator = new ObjectPropertyHydrator();
+        $hydrator->setNamingStrategy(new UnderscoreNamingStrategy());
+
+        return $hydrator;
     }
 }

@@ -10,11 +10,18 @@ class CountryResource extends AbstractResourceListener
     /**
      * @var RepositoryInterface
      */
-    private $repository;
+    private $countryRepository;
+    /**
+     * @var \Covid19CivicTech\V1\Rest\Group\Model\RepositoryInterface
+     */
+    private $groupRepository;
 
-    public function __construct(RepositoryInterface $repository)
+    public function __construct(
+        RepositoryInterface $countryRepository,
+        \Covid19CivicTech\V1\Rest\Group\Model\RepositoryInterface $groupRepository)
     {
-        $this->repository = $repository;
+        $this->countryRepository = $countryRepository;
+        $this->groupRepository = $groupRepository;
     }
 
     /**
@@ -25,7 +32,7 @@ class CountryResource extends AbstractResourceListener
      */
     public function fetch($id)
     {
-        return $this->repository->fetchById($id);
+        return $this->countryRepository->fetchById($id);
     }
 
     /**
@@ -36,6 +43,8 @@ class CountryResource extends AbstractResourceListener
      */
     public function fetchAll($params = [])
     {
-        return $this->repository->fetchAllWithGroupsOrderedByName();
+        return $this->countryRepository->fetchAllByIdsOrderedByName(
+            $this->groupRepository->fetchAllCountryIds()
+        );
     }
 }

@@ -6,11 +6,6 @@ use Covid19CivicTech\V1\Rest\Country\CountryEntity;
 interface RepositoryInterface
 {
     /**
-     * @return CountryEntity[]
-     */
-    public function fetchAllWithGroupsOrderedByName();
-
-    /**
      * @param int $id
      * @return CountryEntity|null
      */
@@ -20,5 +15,5 @@ interface RepositoryInterface
      * @param array $ids
      * @return CountryEntity[]
      */
-    public function fetchAllByIds(array $ids);
+    public function fetchAllByIdsOrderedByName(array $ids);
 }

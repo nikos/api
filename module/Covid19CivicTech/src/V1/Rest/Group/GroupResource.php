@@ -1,14 +1,22 @@
 <?php
 namespace Covid19CivicTech\V1\Rest\Group;
 
-use Covid19CivicTech\V1\Rest\Country\CountryEntity;
-use Covid19CivicTech\V1\Rest\ServiceLink\ServiceLinkCollection;
-use Covid19CivicTech\V1\Rest\ServiceLink\ServiceLinkEntity;
+use Covid19CivicTech\V1\Rest\Group\Model\RepositoryInterface;
 use Laminas\ApiTools\ApiProblem\ApiProblem;
 use Laminas\ApiTools\Rest\AbstractResourceListener;
 
 class GroupResource extends AbstractResourceListener
 {
+    /**
+     * @var RepositoryInterface
+     */
+    private $repository;
+
+    public function __construct(RepositoryInterface $repository)
+    {
+        $this->repository = $repository;
+    }
+
     /**
      * Fetch a resource
      *
@@ -17,7 +25,7 @@ class GroupResource extends AbstractResourceListener
      */
     public function fetch($id)
     {
-        return null;
+        return $this->repository->fetchById($id);
     }
 
     /**
@@ -28,6 +36,10 @@ class GroupResource extends AbstractResourceListener
      */
     public function fetchAll($params = [])
     {
-        return new ApiProblem(405, 'The GET method has not been defined for collections');
+        if (isset($params['countryId'])) {
+            $this->repository->addFilterByCountryForCollection((int) $params['countryId']);
+        }
+
+        return $this->repository->getCollection();
     }
 }
