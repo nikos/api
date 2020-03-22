@@ -6,7 +6,7 @@ phases:
   pre_build:
     commands:
       - echo logging in to AWS ECR...
-      - $(aws ecr get-login --no-include-email --region us-central-1)
+      - $(aws ecr get-login --no-include-email --region us-east-1)
   build:
     commands:
       - echo build Docker image on `date`
