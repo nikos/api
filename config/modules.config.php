@@ -25,6 +25,7 @@ return [
     'Laminas\\ApiTools\\Rest',
     'Laminas\\ApiTools\\Rpc',
     'Laminas\\ApiTools\\Versioning',
+    'ZfrCors',
     'Application',
     'Covid19CivicTech',
 ];
