@@ -30,6 +30,8 @@ resource "aws_rds_cluster" "db" {
   master_password         = (length(var.password) > 0) ? var.password : random_string.password_main.result
   backup_retention_period = 5
   preferred_backup_window = "07:00-09:00"
+  final_snapshot_identifier = "backup"
+  skip_final_snapshot     = true
 }
 
 resource "aws_ecr_repository" "registry" {
