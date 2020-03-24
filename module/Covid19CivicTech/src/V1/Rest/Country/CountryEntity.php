@@ -18,4 +18,9 @@ class CountryEntity
      */
     public $iso3166Code;
 
+    /**
+     * @var int
+     */
+    public $countGroups;
+
 }
