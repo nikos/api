@@ -21,4 +21,11 @@ interface RepositoryInterface
      * @return TopicEntity[]
      */
     public function fetchAllForGroupIdsIndexedByGroupId(array $groupIds);
+
+    /**
+     * @param int[] $topicIds
+     * @return int[]
+     *
+     */
+    public function fetchAllGroupIdsForTopicIds($topicIds);
 }

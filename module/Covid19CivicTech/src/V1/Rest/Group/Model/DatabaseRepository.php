@@ -73,7 +73,7 @@ class DatabaseRepository extends AbstractDatabaseRepository implements Repositor
             $group->country = $this->countryRepository->fetchById($group->countryId);
         }
 
-        $topics = $this->fetchAllTopicsGroupedByGroupIdForGroups([$group]);
+        $topics = $this->topicRepository->fetchAllForGroupIdsIndexedByGroupId([$group]);
         if (! empty($topics[$group->id])) {
             $group->topics = $topics[$group->id];
         }
@@ -88,7 +88,12 @@ class DatabaseRepository extends AbstractDatabaseRepository implements Repositor
 
     public function addFilterByCountryForCollection(int $countryId)
     {
-        $this->collectionFilters['country_id'] = $countryId;
+        $this->collectionFilters['countryId'] = $countryId;
+    }
+
+    public function addFilterByTopicsForCollection(array $topicIds)
+    {
+        $this->collectionFilters['topicIds'] = $topicIds;
     }
 
     public function getCollection(): GroupCollection
@@ -127,8 +132,12 @@ class DatabaseRepository extends AbstractDatabaseRepository implements Repositor
     {
         $where = new Where();
 
-        if (isset($this->collectionFilters['country_id'])) {
+        if (isset($this->collectionFilters['countryId'])) {
             $where->equalTo('country_id', $this->collectionFilters['country_id']);
+        }
+        if (! empty($this->collectionFilters['topicIds'])) {
+            $groupIds = $this->topicRepository->fetchAllGroupIdsForTopicIds($this->collectionFilters['topicIds']);
+            $where->in('id', $groupIds);
         }
 
         return $where;

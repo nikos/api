@@ -44,6 +44,30 @@ class DatabaseRepository extends AbstractDatabaseRepository implements Repositor
         return $topicsIndexedByGroupId;
     }
 
+    public function fetchAllGroupIdsForTopicIds($topicIds)
+    {
+        if (empty($topicIds)) {
+            return [];
+        }
+
+        $where = new Where();
+        $where->in('topic_id', $topicIds);
+
+        $select = new Select('group_topic');
+        $select->columns(['group_id']);
+        $select->where($where);
+        $select->quantifier(Select::QUANTIFIER_DISTINCT);
+
+        $statement = $this->tableGateway->getSql()->prepareStatementForSqlObject($select);
+        $rows = $statement->execute();
+        $groupIds = [];
+        foreach ($rows as $row) {
+            $groupIds[] = $row['group_id'];
+        }
+
+        return $groupIds;
+    }
+
     private function fetchAllTopicIdsForGroupIdsGroupedByGroupId(array $groupIds)
     {
         if (empty($groupIds)) {

@@ -9,10 +9,12 @@
 namespace Application;
 
 use Application\Console\ImportFromCsvCommand;
+use Laminas\Filter\Callback;
+use Laminas\ModuleManager\Feature\FilterProviderInterface;
 use Laminas\ModuleManager\Feature\ServiceProviderInterface;
 use Laminas\ServiceManager\ServiceManager;
 
-class Module implements ServiceProviderInterface
+class Module implements ServiceProviderInterface, FilterProviderInterface
 {
     public function getConfig()
     {
@@ -29,6 +31,25 @@ class Module implements ServiceProviderInterface
                     return new ImportFromCsvCommand($dbAdapter);
                 }
             ]
+        ];
+    }
+
+    public function getFilterConfig()
+    {
+        return [
+            'factories' => [
+                'Application\Filter\CommaSeparatedListAsArray' => function () {
+                    return new Callback([
+                        'callback' => function ($commaSeparatedValues) {
+                            if (trim($commaSeparatedValues) == '') {
+                                return [];
+                            }
+
+                            return explode(',', $commaSeparatedValues);
+                        }
+                    ]);
+                },
+            ],
         ];
     }
 }

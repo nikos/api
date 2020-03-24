@@ -88,6 +88,7 @@ return [
             ],
             'collection_query_whitelist' => [
                 0 => 'countryId',
+                1 => 'topicIds',
             ],
             'page_size' => 25,
             'page_size_param' => 'pageSize',
@@ -259,6 +260,28 @@ return [
                     ],
                 ],
                 'name' => 'countryId',
+            ],
+            1 => [
+                'required' => false,
+                'validators' => [
+                    0 => [
+                        'name' => \Application\Validator\NonEmptyListOfUniqueIntegerIds::class,
+                    ],
+                ],
+                'filters' => [
+                    0 => [
+                        'name' => \Laminas\Filter\PregReplace::class,
+                        'options' => [
+                            'pattern' => '/\\s/',
+                            'replacement' => '',
+                        ],
+                    ],
+                    1 => [
+                        'name' => 'Application\\Filter\\CommaSeparatedListAsArray',
+                        'options' => [],
+                    ],
+                ],
+                'name' => 'topicIds',
             ],
         ],
         'Covid19CivicTech\\V1\\Rest\\ServiceLink\\Validator\\GET' => [

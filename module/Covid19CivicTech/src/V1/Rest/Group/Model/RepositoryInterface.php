@@ -15,6 +15,7 @@ interface RepositoryInterface
     public function fetchById(int $id);
 
     public function addFilterByCountryForCollection(int $countryId);
+    public function addFilterByTopicsForCollection(array $topicIds);
 
     public function getCollection(): GroupCollection;
 }
