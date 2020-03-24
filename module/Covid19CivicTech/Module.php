@@ -4,6 +4,7 @@ namespace Covid19CivicTech;
 use Covid19CivicTech\V1\Rest\Country;
 use Covid19CivicTech\V1\Rest\Group;
 use Covid19CivicTech\V1\Rest\Topic;
+use Covid19CivicTech\V1\Rest\ServiceLink;
 use Laminas\ApiTools\Provider\ApiToolsProviderInterface;
 use Laminas\Db\ResultSet\HydratingResultSet;
 use Laminas\Db\TableGateway\TableGateway;
@@ -68,7 +69,9 @@ class Module implements ApiToolsProviderInterface, ServiceProviderInterface
 
                     return new Group\Model\DatabaseRepository(
                         $tableGateway,
-                        $serviceManager->get(Country\Model\RepositoryInterface::class)
+                        $serviceManager->get(Country\Model\RepositoryInterface::class),
+                        $serviceManager->get(Topic\Model\RepositoryInterface::class),
+                        $serviceManager->get(ServiceLink\Model\RepositoryInterface::class)
                     );
                 },
                 Topic\Model\RepositoryInterface::class => function (ServiceManager $serviceManager) {
@@ -81,6 +84,17 @@ class Module implements ApiToolsProviderInterface, ServiceProviderInterface
                     $tableGateway = new TableGateway('topic', $dbAdapter, null, $resultSetPrototype);
 
                     return new Topic\Model\DatabaseRepository($tableGateway);
+                },
+                ServiceLink\Model\RepositoryInterface::class => function (ServiceManager $serviceManager) {
+                    $dbAdapter = $serviceManager->get('DbAdapterApi');
+
+                    $resultSetPrototype = new HydratingResultSet();
+                    $resultSetPrototype->setHydrator($this->getDefaultDatabaseHydrator());
+                    $resultSetPrototype->setObjectPrototype(new ServiceLink\ServiceLinkEntity());
+
+                    $tableGateway = new TableGateway('service_link', $dbAdapter, null, $resultSetPrototype);
+
+                    return new ServiceLink\Model\DatabaseRepository($tableGateway);
                 }
             ]
         ];

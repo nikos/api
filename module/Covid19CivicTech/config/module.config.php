@@ -90,7 +90,7 @@ return [
                 0 => 'countryId',
             ],
             'page_size' => 25,
-            'page_size_param' => null,
+            'page_size_param' => 'pageSize',
             'entity_class' => \Covid19CivicTech\V1\Rest\Group\GroupEntity::class,
             'collection_class' => \Covid19CivicTech\V1\Rest\Group\GroupCollection::class,
             'service_name' => 'Group',
@@ -236,6 +236,9 @@ return [
         'Covid19CivicTech\\V1\\Rest\\Group\\Controller' => [
             'GET' => 'Covid19CivicTech\\V1\\Rest\\Group\\Validator\\GET',
         ],
+        'Covid19CivicTech\\V1\\Rest\\ServiceLink\\Controller' => [
+            'GET' => 'Covid19CivicTech\\V1\\Rest\\ServiceLink\\Validator\\GET',
+        ],
     ],
     'input_filter_specs' => [
         'Covid19CivicTech\\V1\\Rest\\Group\\Validator\\GET' => [
@@ -256,6 +259,26 @@ return [
                     ],
                 ],
                 'name' => 'countryId',
+            ],
+        ],
+        'Covid19CivicTech\\V1\\Rest\\ServiceLink\\Validator\\GET' => [
+            0 => [
+                'required' => false,
+                'validators' => [
+                    0 => [
+                        'name' => \Laminas\Validator\Regex::class,
+                        'options' => [
+                            'pattern' => '/^[1-9]{1}[0-9]*$/',
+                        ],
+                    ],
+                ],
+                'filters' => [
+                    0 => [
+                        'name' => \Zend\Filter\StringTrim::class,
+                        'options' => [],
+                    ],
+                ],
+                'name' => 'groupId',
             ],
         ],
     ],
