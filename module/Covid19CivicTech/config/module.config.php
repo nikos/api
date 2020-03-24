@@ -90,7 +90,7 @@ return [
                 0 => 'countryId',
             ],
             'page_size' => 25,
-            'page_size_param' => null,
+            'page_size_param' => 'pageSize',
             'entity_class' => \Covid19CivicTech\V1\Rest\Group\GroupEntity::class,
             'collection_class' => \Covid19CivicTech\V1\Rest\Group\GroupCollection::class,
             'service_name' => 'Group',

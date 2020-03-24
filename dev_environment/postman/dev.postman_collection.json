@@ -81,12 +81,12 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "{{baseUrl}}/group{{queryParams}}&countryId=1",
+					"raw": "{{baseUrl}}/group{{queryParams}}&page=2&pageSize=1",
 					"host": [
 						"{{baseUrl}}"
 					],
 					"path": [
-						"group{{queryParams}}&countryId=1"
+						"group{{queryParams}}&page=2&pageSize=1"
 					]
 				}
 			},
