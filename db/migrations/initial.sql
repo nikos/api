@@ -23,7 +23,7 @@ CREATE TABLE IF NOT EXISTS `group` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `name` VARCHAR(500) NOT NULL,
   `description` TEXT NOT NULL,
-  `country_id` INT NULL,
+  `country_id` INT UNSIGNED NULL,
   `logo_url` VARCHAR(500) NULL,
   PRIMARY KEY (`id`),
   INDEX `fk_group_country1_idx` (`country_id` ASC),
