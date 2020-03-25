@@ -133,7 +133,7 @@ class DatabaseRepository extends AbstractDatabaseRepository implements Repositor
         $where = new Where();
 
         if (isset($this->collectionFilters['countryId'])) {
-            $where->equalTo('country_id', $this->collectionFilters['country_id']);
+            $where->equalTo('country_id', $this->collectionFilters['countryId']);
         }
         if (! empty($this->collectionFilters['topicIds'])) {
             $groupIds = $this->topicRepository->fetchAllGroupIdsForTopicIds($this->collectionFilters['topicIds']);

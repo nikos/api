@@ -37,11 +37,12 @@ class GroupResource extends AbstractResourceListener
     public function fetchAll($params = [])
     {
         $filteredValues = $this->getInputFilter()->getValues();
+        // country might be empty
         if (isset($filteredValues['countryId'])) {
             $this->repository->addFilterByCountryForCollection((int) $filteredValues['countryId']);
         }
 
-        if (isset($filteredValues['topicIds'])) {
+        if (! empty($filteredValues['topicIds'])) {
             $this->repository->addFilterByTopicsForCollection($filteredValues['topicIds']);
         }
 
