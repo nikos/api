@@ -11,7 +11,8 @@ CREATE TABLE IF NOT EXISTS `country` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `name` VARCHAR(255) NOT NULL,
   `iso_3166_code` VARCHAR(2) NOT NULL,
-  PRIMARY KEY (`id`))
+  PRIMARY KEY (`id`),
+  INDEX `name_idx` (`name` ASC))
 ENGINE = InnoDB;
 
 
@@ -22,9 +23,11 @@ CREATE TABLE IF NOT EXISTS `group` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `name` VARCHAR(500) NOT NULL,
   `description` TEXT NOT NULL,
-  `country_id` INT UNSIGNED NULL,
+  `country_id` INT NULL,
+  `logo_url` VARCHAR(500) NULL,
   PRIMARY KEY (`id`),
   INDEX `fk_group_country1_idx` (`country_id` ASC),
+  INDEX `name_idx` (`name` ASC),
   CONSTRAINT `fk_group_country1`
     FOREIGN KEY (`country_id`)
     REFERENCES `country` (`id`)
@@ -57,8 +60,9 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `topic` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
-  `topic` VARCHAR(255) NULL,
-  PRIMARY KEY (`id`))
+  `name` VARCHAR(255) NULL,
+  PRIMARY KEY (`id`),
+  INDEX `name_idx` (`name` ASC))
 ENGINE = InnoDB;
 
 

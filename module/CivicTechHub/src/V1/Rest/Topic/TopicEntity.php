@@ -11,5 +11,5 @@ class TopicEntity
     /**
      * @var string
      */
-    public $topic;
+    public $name;
 }

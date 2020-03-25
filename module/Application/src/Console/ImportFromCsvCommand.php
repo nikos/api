@@ -183,7 +183,7 @@ class ImportFromCsvCommand extends Command
     {
         $sql = new Sql($this->dbAdapter);
         $insert = $sql->insert('topic');
-        $insert->values(['topic' => $topic]);
+        $insert->values(['name' => $topic]);
 
         $statement = $sql->prepareStatementForSqlObject($insert);
         $result = $statement->execute();
@@ -230,7 +230,7 @@ class ImportFromCsvCommand extends Command
         $rows = $this->dbAdapter->getDriver()->getConnection()->execute('Select * from topic;');
         $this->topicToTopicIdMap = [];
         foreach ($rows as $row) {
-            $this->topicToTopicIdMap[$row['topic']] = $row['id'];
+            $this->topicToTopicIdMap[$row['name']] = $row['id'];
         }
     }
 
