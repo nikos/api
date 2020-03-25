@@ -128,6 +128,16 @@ class DatabaseRepository extends AbstractDatabaseRepository implements Repositor
         return new GroupCollection($paginatorAdapter);
     }
 
+    public function fetchListWithIdAndNameForSearchphrase(string $searchphrase): array
+    {
+        $select = $this->getSelect();
+        $select->columns(['id', 'name']);
+        $select->where((new Where())->like('name', '%' . $searchphrase . '%'));
+        $select->order(['name' => 'ASC']);
+
+        return $this->fetchRowsWithSelect($select);
+    }
+
     private function buildWhereForCollection()
     {
         $where = new Where();

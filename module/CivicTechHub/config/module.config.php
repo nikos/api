@@ -46,6 +46,16 @@ return [
                     ],
                 ],
             ],
+            'civic-tech-hub.rpc.search' => [
+                'type' => 'Segment',
+                'options' => [
+                    'route' => '/search',
+                    'defaults' => [
+                        'controller' => 'CivicTechHub\\V1\\Rpc\\Search\\Controller',
+                        'action' => 'search',
+                    ],
+                ],
+            ],
         ],
     ],
     'api-tools-versioning' => [
@@ -54,6 +64,7 @@ return [
             1 => 'civic-tech-hub.rest.group',
             2 => 'civic-tech-hub.rest.service-link',
             3 => 'civic-tech-hub.rest.topic',
+            4 => 'civic-tech-hub.rpc.search',
         ],
     ],
     'api-tools-rest' => [
@@ -139,6 +150,7 @@ return [
             'CivicTechHub\\V1\\Rest\\Group\\Controller' => 'HalJson',
             'CivicTechHub\\V1\\Rest\\ServiceLink\\Controller' => 'HalJson',
             'CivicTechHub\\V1\\Rest\\Topic\\Controller' => 'HalJson',
+            'CivicTechHub\\V1\\Rpc\\Search\\Controller' => 'Json',
         ],
         'accept_whitelist' => [
             'CivicTechHub\\V1\\Rest\\Country\\Controller' => [
@@ -161,6 +173,11 @@ return [
                 1 => 'application/hal+json',
                 2 => 'application/json',
             ],
+            'CivicTechHub\\V1\\Rpc\\Search\\Controller' => [
+                0 => 'application/vnd.civic-tech-hub.v1+json',
+                1 => 'application/json',
+                2 => 'application/*+json',
+            ],
         ],
         'content_type_whitelist' => [
             'CivicTechHub\\V1\\Rest\\Country\\Controller' => [
@@ -176,6 +193,10 @@ return [
                 1 => 'application/json',
             ],
             'CivicTechHub\\V1\\Rest\\Topic\\Controller' => [
+                0 => 'application/vnd.civic-tech-hub.v1+json',
+                1 => 'application/json',
+            ],
+            'CivicTechHub\\V1\\Rpc\\Search\\Controller' => [
                 0 => 'application/vnd.civic-tech-hub.v1+json',
                 1 => 'application/json',
             ],
@@ -240,6 +261,9 @@ return [
         'CivicTechHub\\V1\\Rest\\ServiceLink\\Controller' => [
             'GET' => 'CivicTechHub\\V1\\Rest\\ServiceLink\\Validator\\GET',
         ],
+        'CivicTechHub\\V1\\Rpc\\Search\\Controller' => [
+            'GET' => 'CivicTechHub\\V1\\Rpc\\Search\\Validator\\GET',
+        ],
     ],
     'input_filter_specs' => [
         'CivicTechHub\\V1\\Rest\\Group\\Validator\\GET' => [
@@ -303,6 +327,59 @@ return [
                 ],
                 'name' => 'groupId',
             ],
+        ],
+        'CivicTechHub\\V1\\Rpc\\Search\\Validator\\GET' => [
+            0 => [
+                'required' => true,
+                'validators' => [
+                    0 => [
+                        'name' => \Laminas\Validator\StringLength::class,
+                        'options' => [
+                            'min' => 2
+                        ]
+                    ]
+                ],
+                'filters' => [],
+                'name' => 'phrase',
+                'field_type' => 'string',
+            ],
+            1 => [
+                'required' => false,
+                'validators' => [
+                    0 => [
+                        'name' => \CivicTechHub\V1\Rpc\Search\Validator\ListWithUniqueSearchEntities::class,
+                    ],
+                ],
+                'filters' => [
+                    0 => [
+                        'name' => \Laminas\Filter\PregReplace::class,
+                        'options' => [
+                            'pattern' => '/\\s/',
+                            'replacement' => '',
+                        ],
+                    ],
+                    1 => [
+                        'name' => 'Application\\Filter\\CommaSeparatedListAsArray',
+                        'options' => [],
+                    ],
+                ],
+                'name' => 'entities',
+                'field_type' => 'string',
+            ],
+        ],
+    ],
+    'controllers' => [
+        'factories' => [
+            'CivicTechHub\\V1\\Rpc\\Search\\Controller' => \CivicTechHub\V1\Rpc\Search\SearchControllerFactory::class,
+        ],
+    ],
+    'api-tools-rpc' => [
+        'CivicTechHub\\V1\\Rpc\\Search\\Controller' => [
+            'service_name' => 'Search',
+            'http_methods' => [
+                0 => 'GET',
+            ],
+            'route_name' => 'civic-tech-hub.rpc.search',
         ],
     ],
 ];

@@ -18,4 +18,6 @@ interface RepositoryInterface
     public function addFilterByTopicsForCollection(array $topicIds);
 
     public function getCollection(): GroupCollection;
+
+    public function fetchListWithIdAndNameForSearchphrase(string $searchphrase): array;
 }

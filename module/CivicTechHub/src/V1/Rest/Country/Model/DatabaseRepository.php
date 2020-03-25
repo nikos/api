@@ -40,6 +40,16 @@ class DatabaseRepository extends AbstractDatabaseRepository implements Repositor
         return $countries;
     }
 
+    public function fetchListWithIdAndNameForSearchphrase(string $searchphrase): array
+    {
+        $select = $this->getSelect();
+        $select->columns(['id', 'name']);
+        $select->where((new Where())->like('name', '%' . $searchphrase . '%'));
+        $select->order(['name' => 'ASC']);
+
+        return $this->fetchRowsWithSelect($select);
+    }
+
     /**
      * @param CountryEntity[] $countries
      * @param int[] $countryIds

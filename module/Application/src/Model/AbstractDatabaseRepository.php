@@ -111,4 +111,16 @@ abstract class AbstractDatabaseRepository
 
         return iterator_to_array($resultSet);
     }
+
+    protected function fetchRowsWithSelect(Select $select)
+    {
+        $statement = $this->tableGateway->getSql()->prepareStatementForSqlObject($select);
+        $resultSet = $statement->execute();
+        $rows = [];
+        foreach ($resultSet as $row) {
+            $rows[] = $row;
+        }
+
+        return $rows;
+    }
 }
