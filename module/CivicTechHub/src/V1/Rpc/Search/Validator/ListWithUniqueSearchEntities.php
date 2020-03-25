@@ -11,11 +11,15 @@ class ListWithUniqueSearchEntities extends AbstractValidator
     const ErrorContainsInvalidEntity = 'containsInvalidEntity';
     const ErrorContainsDuplicates = 'containsDuplicates';
 
-    protected $messageTemplates = [
-        self::ErrorContainsInvalidEntity => 'List contains at least one invalid entity.',
-        self::ErrorContainsDuplicates => 'List contains duplicate entities.',
-    ];
+    public function __construct($options = null)
+    {
+        $this->messageTemplates = [
+            self::ErrorContainsInvalidEntity => sprintf('List must only contain the following entities: %s.', implode(', ', SearchController::AllEntities)),
+            self::ErrorContainsDuplicates => 'List contains duplicate entities.'
+        ];
 
+        parent::__construct($options);
+    }
 
     public function isValid($value)
     {
