@@ -27,5 +27,5 @@ return [
     'Laminas\\ApiTools\\Versioning',
     'ZfrCors',
     'Application',
-    'Covid19CivicTech',
+    'CivicTechHub',
 ];

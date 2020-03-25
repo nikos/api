@@ -1,4 +1,4 @@
-# Covid19 Civic Tech Api
+# CivicTechHub Api
 
 Based on https://github.com/laminas-api-tools/api-tools-skeleton.
 
