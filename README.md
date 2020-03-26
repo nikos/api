@@ -41,3 +41,6 @@ Build image (provide version number like for example 1.0.0):
 
 Push to registry (image tag is printed at the end of last command):
 `docker push image-tag`
+
+### Sloppy.io
+For now we host on sloppy.io. WIth free plan, no private registry is allowed. So we user images from geiru/civictechhub-api-php-apache.

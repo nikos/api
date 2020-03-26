@@ -1,0 +1,29 @@
+version: "v1"
+project: "civic-tech-hub"
+services:
+  api:
+    php-apache:
+      image: "geiru/civictechhub-api-php-apache:0.0.1"
+      instances: 1
+      mem: 512
+      domain: "civictechhub.sloppy.zone"
+      port: 8080
+      env:
+        - MYSQL_HOSTNAME: "db.api.civic-tech-hub"
+        - MYSQL_PORT: "3306"
+        - MYSQL_DATABASE: "$MYSQL_DATABASE"
+        - MYSQL_USER: "$MYSQL_USER"
+        - MYSQL_PASSWORD: "$MYSQL_PASSWORD"
+        - API_CORS_ALLOWED_ORIGIN: "$API_CORS_ALLOWED_ORIGIN"
+    db:
+      image: "mysql:8"
+      instances: 1
+      mem: 512
+      volumes:
+        - path: "/var/lib/mysql"
+          size: 8GB
+      env:
+        - MYSQL_DATABASE: "$MYSQL_DATABASE"
+        - MYSQL_USER: "$MYSQL_USER"
+        - MYSQL_PASSWORD: "$MYSQL_PASSWORD"
+        - MYSQL_ROOT_PASSWORD: "$MYSQL_ROOT_PASSWORD"
