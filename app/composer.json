@@ -36,7 +36,9 @@
         "laminas/laminas-development-mode": "^3.2",
         "laminas/laminas-zendframework-bridge": "^1.0",
         "symfony/console": "^5.0",
-        "zfr/zfr-cors": "1.*"
+        "zfr/zfr-cors": "1.*",
+        "robmorgan/phinx": "^0.11.4",
+        "laminas/laminas-console": "^2.8"
     },
     "require-dev": {
         "laminas-api-tools/api-tools-admin": "^1.6",
@@ -45,7 +47,6 @@
         "laminas/laminas-developer-tools": "^1.2.1",
         "laminas/laminas-test": "^2.6.1 || ^3.2",
         "roave/security-advisories": "dev-master",
-        "robmorgan/phinx": "^0.11.4",
         "zfcampus/zf-deploy": "^1.3"
     },
     "suggest": {

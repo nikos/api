@@ -36,8 +36,8 @@ First, get a token from github: https://help.github.com/en/packages/using-github
 Login to registry:
 `cat path-to-your-token-file | docker login docker.pkg.github.com -u your-github-username --password-stdin`  (see https://github.com/civictechhub/api/packages?package_type=Docker)
 
-Build image (provide version number like for example 1.0.0):
-`docker/scripts/build-image.sh version-number`
+Build images (provide version number like for example 1.0.0):
+`docker/scripts/build-images.sh version-number`
 
 Push to registry (image tag is printed at the end of last command):
 `docker push image-tag`

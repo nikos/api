@@ -24,9 +24,10 @@ services:
     depends_on:
       - db
   db:
-    image: mysql
-    command: --default-authentication-plugin=mysql_native_password
-    restart: always
+    build:
+      context: ../../../
+      dockerfile: docker/src/db.Dockerfile
+      target: development
     ports:
       - ${HOST_MYSQL_PORT}:3306
     environment:
