@@ -1,4 +1,4 @@
-FROM alpine:edge AS build
+ROM alpine:edge AS build
 MAINTAINER srsh rabenstein@srsh.io
 ADD . /app
 
@@ -24,4 +24,3 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin -
 WORKDIR /app
 RUN composer install
 RUN composer development-enable
-

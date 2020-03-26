@@ -2,13 +2,8 @@ version: "3.4"
 services:
   api:
     build:
-<<<<<<< HEAD:docker-compose.yml
-      context: .
-      dockerfile: Dockerfile_dev
-=======
       context: ../../../
       dockerfile: docker/src/api.Dockerfile
->>>>>>> 34780368b5068e0a17d126abb141dff793c1b5bb:docker/environment/dev/docker-compose.yml
       args:
         - WWW_DATA_USER_ID
         - WWW_DATA_GROUP_ID
