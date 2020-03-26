@@ -1,0 +1,8 @@
+!data/cache/.gitkeep
+/composer.lock
+/phpunit.xml
+/vendor/
+.composer
+config/development.config.php
+data/cache/*
+.idea

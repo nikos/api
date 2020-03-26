@@ -9,15 +9,21 @@
 			"name": "get country",
 			"request": {
 				"method": "GET",
-				"header": [],
+				"header": [
+					{
+						"key": "Origin",
+						"value": "http://foo.com",
+						"type": "text"
+					}
+				],
 				"url": {
-					"raw": "{{baseUrl}}/country/1{{queryParams}}",
+					"raw": "{{baseUrl}}/country/35{{queryParams}}",
 					"host": [
 						"{{baseUrl}}"
 					],
 					"path": [
 						"country",
-						"1{{queryParams}}"
+						"35{{queryParams}}"
 					]
 				}
 			},
@@ -81,12 +87,12 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "{{baseUrl}}/group{{queryParams}}&page=2&pageSize=1",
+					"raw": "{{baseUrl}}/group{{queryParams}}&countryId=21",
 					"host": [
 						"{{baseUrl}}"
 					],
 					"path": [
-						"group{{queryParams}}&page=2&pageSize=1"
+						"group{{queryParams}}&countryId=21"
 					]
 				}
 			},
@@ -140,6 +146,23 @@
 					],
 					"path": [
 						"service-link{{queryParams}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "search",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/search{{queryParams}}&phrase=alb&entities=country,topic,group",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"search{{queryParams}}&phrase=alb&entities=country,topic,group"
 					]
 				}
 			},
