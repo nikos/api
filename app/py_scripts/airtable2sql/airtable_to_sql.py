@@ -2,6 +2,7 @@
 
 # CivicTechHub AIRTABLE TO SQL BY Franco Morero
 from airtable import Airtable
+API_KEY = ''  # your API KEY
 
 countrys_dict = {
     '1': 'Andorra',
@@ -257,7 +258,6 @@ def get_key(val):
     return None
 
 
-API_KEY = ''  # your API KEY
 groups = Airtable('app4FKBWUILUmUsE1', 'Groups', api_key=API_KEY)
 groups_records = groups.get_all()
 country = Airtable('app4FKBWUILUmUsE1', 'Country', api_key=API_KEY)
