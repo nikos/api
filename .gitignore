@@ -1,10 +1,12 @@
-!data/cache/.gitkeep
-.vagrant/
-/composer.lock
-/phpunit.xml
-/vendor/
-config/development.config.php
-data/cache/*
-.env
+nbproject
+._*
+.~lock.*
+.buildpath
+.DS_Store
 .idea
+<<<<<<< HEAD
 .terraform
+=======
+.project
+.settings
+>>>>>>> 34780368b5068e0a17d126abb141dff793c1b5bb

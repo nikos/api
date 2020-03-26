@@ -1,0 +1,45 @@
+version: "3.4"
+services:
+  api:
+    build:
+<<<<<<< HEAD:docker-compose.yml
+      context: .
+      dockerfile: Dockerfile_dev
+=======
+      context: ../../../
+      dockerfile: docker/src/api.Dockerfile
+>>>>>>> 34780368b5068e0a17d126abb141dff793c1b5bb:docker/environment/dev/docker-compose.yml
+      args:
+        - WWW_DATA_USER_ID
+        - WWW_DATA_GROUP_ID
+      target: development
+    ports:
+     - ${HOST_HTTP_PORT}:8080
+    environment:
+      - MYSQL_HOSTNAME=db
+      - MYSQL_PORT=3306
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+      - API_CORS_ALLOWED_ORIGIN=${API_CORS_ALLOWED_ORIGIN}
+    volumes:
+     - ../../../app:/var/www
+    extra_hosts:
+       - xdebug.remote.host:${XDEBUG_REMOTE_HOST}
+    depends_on:
+      - db
+  db:
+    build:
+      context: ../../../
+      dockerfile: docker/src/db.Dockerfile
+      target: development
+    ports:
+      - ${HOST_MYSQL_PORT}:3306
+    environment:
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+
+
+

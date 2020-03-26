@@ -6,14 +6,6 @@ nbproject
 .idea
 .project
 .settings
-vendor/
-public/vendor/
-config/development.config.php
-config/autoload/local.php
-config/autoload/*.local.php
-!public/vendor/README.md
-data/cache/*
-!data/cache/.gitkeep
 Dockerfile*
 *.md 
 Vagrantfile
@@ -21,3 +13,11 @@ composer.lock
 .en*
 dist
 *.yml
+app/vendor/
+app/public/vendor/
+app/config/development.config.php
+app/config/autoload/local.php
+app/config/autoload/*.local.php
+!app/public/vendor/README.md
+app/data/cache/*
+!app/data/cache/.gitkeep

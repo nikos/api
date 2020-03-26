@@ -35,7 +35,7 @@ resource "aws_rds_cluster" "db" {
 }
 
 resource "aws_ecr_repository" "registry" {
-  name                 = "civitech"
+  name                 = var.stack_name
   image_tag_mutability = "MUTABLE"
 
   image_scanning_configuration {
@@ -43,33 +43,11 @@ resource "aws_ecr_repository" "registry" {
   }
 }
 
-resource "aws_ecs_cluster" "web" {
-  name = "covid19-civitech"
+resource "aws_ecs_cluster" "api" {
+  name = var.stack_name
 }
 
 
-data "aws_ecr_repository" "c19-registry" {
-  name = "civitech/covid-19-civitech"
-}
-
-
-
-### Outputs 
-
-output "main_db_credentials" {
-  value = {
-    password = (length(var.password) > 0) ? var.password : random_string.password_main.result
-  }
-}
-
-output "ecr_image_respository_url" {
-  value      = aws_ecr_repository.registry.repository_url
-}
-output "ecr_image_respository_arn" {
-  value      = aws_ecr_repository.registry.arn
-}
-### Variables
-variable "password" {
-    type = string
-    default = ""
+data "aws_ecr_repository" "registry" {
+  name = var.stack_name
 }
