@@ -1,10 +1,12 @@
-# pip install airtable-python-wrapper
-
-# CivicTechHub AIRTABLE TO SQL BY Franco Morero
+# CivicTechHub AIRTABLE TO SQL
+# by Franco Morero (https://github.com/francomor)
+# This generate to new files: group_inserts.sql and group_topic_inserts.sql
 from airtable import Airtable
+
 API_KEY = ''  # your API KEY
 
-countrys_dict = {
+countries_dict = {
+    '0': 'Global',
     '1': 'Andorra',
     '2': 'United Arab Emirates',
     '3': 'Afghanistan',
@@ -249,41 +251,67 @@ countrys_dict = {
     '242': 'Zimbabwe',
 }
 
+topics_dict = {
+    '1': 'Medical',
+    '2': 'Software',
+    '3': 'Digital',
+    '4': 'Solution',
+    '5': 'Collaboration',
+    '6': 'Data/Information',
+    '7': 'Support',
+}
 
-def get_key(val):
-    for key, value in countrys_dict.items():
-         if val == value:
-             return key
 
+def get_key_in_countries_dict(val):
+    for key, value in countries_dict.items():
+        if val == value:
+            return key
+    return '0'
+
+
+def get_key_in_topics_dict(val):
+    for key, value in topics_dict.items():
+        if val == value:
+            return key
     return None
 
 
-groups = Airtable('app4FKBWUILUmUsE1', 'Groups', api_key=API_KEY)
-groups_records = groups.get_all()
-country = Airtable('app4FKBWUILUmUsE1', 'Country', api_key=API_KEY)
-f = open('inserts.sql', 'w')
+groups_table = Airtable('app4FKBWUILUmUsE1', 'Groups', api_key=API_KEY)
+groups_records = groups_table.get_all()
+country_table = Airtable('app4FKBWUILUmUsE1', 'Country', api_key=API_KEY)
+topics_table = Airtable('app4FKBWUILUmUsE1', 'Topics', api_key=API_KEY)
+file_group_inserts = open('group_inserts.sql', 'w')
+file_group_topic_inserts = open('group_topic_inserts.sql', 'w')
 
+id_counter = 0
 for record in groups_records:
     if 'Group name' in record['fields']:
-        insert = "INSERT INTO `group` (`name`, `description`, `country_id`) VALUES (`" \
-                 + record['fields']['Group name'] + '`, `'
+        group_insert = "INSERT INTO `group` (`id`, `name`, `description`, `country_id`) " \
+                 "VALUES (" + str(id_counter) + ", `" + record['fields']['Group name'] + '`, `'
         if 'Description' in record['fields']:
-            insert += record['fields']['Description']
+            group_insert += record['fields']['Description']
         else:
-            insert += "NULL"
-        insert += '`, `'
+            group_insert += "NULL"
+        group_insert += '`, `'
         if 'Country' in record['fields']:
-            country_records = country.get(record['fields']['Country'][0])
-            country_id = get_key(country_records['fields']['Name'])
-            if country_id:
-                insert += country_id
-            else:
-                insert += "NULL"
+            country_records = country_table.get(record['fields']['Country'][0])
+            country_id = get_key_in_countries_dict(country_records['fields']['Name'])
+            group_insert += country_id
         else:
-            insert += "NULL"
-        insert += '`);'
+            group_insert += '0'
+        group_insert += '`);'
 
-    #print(insert)
-    f.write(insert + '\n')
+        if 'Topics' in record['fields']:
+            for topic_id in record['fields']['Topics']:
+                topic_records = topics_table.get(topic_id)
+                topic_id = get_key_in_topics_dict(topic_records['fields']['Name'])
+                if topic_id:
+                    group_topic_insert = "INSERT INTO `group_topic` (`topic_id`, `group_id`) " \
+                                         "VALUES (" + str(topic_id) + ", " + str(id_counter) + ");"
+                    file_group_topic_inserts.write(group_topic_insert + '\n')
 
-f.close()
+        file_group_inserts.write(group_insert + '\n')
+        id_counter += 1
+
+file_group_topic_inserts.close()
+file_group_inserts.close()
