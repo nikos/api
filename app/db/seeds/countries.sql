@@ -1,4 +1,4 @@
-INSERT INTO `country` (`id`,`name`,`iso_3166_code`) VALUES (0,'Global','GLOBAL');
+INSERT INTO `country` (`id`,`name`,`iso_3166_code`) VALUES (0,'Global','00');
 INSERT INTO `country` (`id`,`name`,`iso_3166_code`) VALUES (1,'Andorra','AD');
 INSERT INTO `country` (`id`,`name`,`iso_3166_code`) VALUES (2,'United Arab Emirates','AE');
 INSERT INTO `country` (`id`,`name`,`iso_3166_code`) VALUES (3,'Afghanistan','AF');
