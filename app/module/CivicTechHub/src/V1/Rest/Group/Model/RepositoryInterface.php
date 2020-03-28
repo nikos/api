@@ -19,5 +19,5 @@ interface RepositoryInterface
 
     public function getCollection(): GroupCollection;
 
-    public function fetchListWithIdAndNameForSearchphrase(string $searchphrase): array;
+    public function fetchListForSearchphrase(string $searchphrase): array;
 }

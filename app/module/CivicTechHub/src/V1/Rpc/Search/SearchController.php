@@ -57,7 +57,7 @@ class SearchController extends AbstractActionController
             $response['results'][self::EntityCountry] = $this->countryRepository->fetchListWithIdAndNameForSearchphrase($phrase);
         }
         if (in_array(self::EntityGroup, $entities)) {
-            $response['results'][self::EntityGroup] = $this->groupRepository->fetchListWithIdAndNameForSearchphrase($phrase);
+            $response['results'][self::EntityGroup] = $this->groupRepository->fetchListForSearchphrase($phrase);
         }
         if (in_array(self::EntityTopic, $entities)) {
            $response['results'][self::EntityTopic] = $this->topicRepository->fetchListWithIdAndNameForSearchphrase($phrase);
