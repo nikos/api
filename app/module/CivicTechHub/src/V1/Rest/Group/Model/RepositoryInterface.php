@@ -7,6 +7,11 @@ use CivicTechHub\V1\Rest\Group\GroupEntity;
 
 interface RepositoryInterface
 {
+    public function embeddAllDependencies();
+    public function embeddCountryAsDependency();
+    public function embeddTopicsAsDependency();
+    public function embeddServiceLinksAsDependency();
+
     public function fetchAllCountryIds(): array;
 
     /**
