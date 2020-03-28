@@ -7,21 +7,16 @@ Based on https://github.com/laminas-api-tools/api-tools-skeleton.
 Requirement:
 1. install [Docker](https://docs.docker.com/install/)
 2. install [Docker Compose](https://docs.docker.com/compose/install/)
-For Buildkit support (for faster builds) make sure you have at least version 1.25.1 of docker compose.
+    * Min version 1.25.1 is required for Buildkit support
 
-* clone this repository
-* change directory to `docker/environment/dev`
-* `cp .env.template .env`
-* replace WWW_DATA_USER_ID and WWW_DATA_GROUP_ID with your user id (`id -u`) and group id (`id -g`)
-* change XDEBUG_REMOTE_HOST if necessary (this is the host that xdebug connects to as seen from within the docker container)
-* change host ports if needed
-* `docker-compose build` (for buildkit support which is faster but experimental, run `COMPOSE_DOCKER_CLI_BUILD=1 DOCKER_BUILDKIT=1 docker-compose build`; it requies docker-compose version minimum 1.25.1)
-* `docker-compose run api composer install`
-* `docker-compose run api composer development-enable`
-* `docker-compose up`
-* `docker-compose run api vendor/bin/phinx migrate`
-* `docker-compose run api vendor/bin/phinx seed:run`
-* `docker-compose run api php bin/console.php import-from-csv /var/www/db/seeds/input.csv`
+Install:
+1. clone this repository
+2. run `make install` in reporitory root
+    * if you dont have `make` run `docker/environment/dev/scripts/install.sh`
+
+Start/Stop:
+* `make start` (or `docker/environment/dev/scripts/start.sh`)
+* `make stop` (or `docker/environment/dev/scripts/stop.sh`)
 
 The api can be accessed through http://localhost:8080 (or whatever `HOST_HTTP_PORT` you set in .env).
 The mysql database can be accessed through localhost:3306 (or whatever `HOST_MYSQL_PORT` you set in .env)

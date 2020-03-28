@@ -50,6 +50,10 @@ ARG WWW_DATA_GROUP_ID
 # copy composer binary
 COPY --from=composer:1.10 /usr/bin/composer /usr/bin/composer
 
+RUN mkdir /var/scripts
+COPY ./docker/environment/dev/scripts/wait-for-it/wait-for-it.sh /var/scripts/wait-for-it.sh
+RUN chmod +x /var/scripts/wait-for-it.sh
+
 # install xdebug
 RUN apt-get update && \
     pecl install xdebug  && \
