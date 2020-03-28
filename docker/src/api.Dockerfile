@@ -21,6 +21,10 @@ RUN apt-get update \
  && apt-get install -y git zlib1g-dev unzip \
  && docker-php-ext-install zip pdo pdo_mysql
 
+# install python and libraries for import scripts
+RUN apt-get install -y python3 python3-pip \
+ && pip3 install airtable-python-wrapper
+
 # remove the content of /var/lib/apt/lists after installing system dependencies, as these files are not needed anymore
 RUN rm -r /var/lib/apt/lists/*
 
