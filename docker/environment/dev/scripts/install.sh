@@ -5,8 +5,8 @@ dockerDevRoot=$projectRoot/docker/environment/dev
 
 # copy .env file and replace user and group id
 cp $dockerDevRoot/.env.template $dockerDevRoot/.env
-sed -i 's!WWW_DATA_USER_ID=500!WWW_DATA_USER_ID=$(id -u))!g' $dockerDevRoot/.env
-sed -i 's!WWW_DATA_GROUP_ID=500!WWW_DATA_GROUP_ID=$(id -u))!g' $dockerDevRoot/.env
+sed -i 's!WWW_DATA_USER_ID=1000!WWW_DATA_USER_ID=$(id -u))!g' $dockerDevRoot/.env
+sed -i 's!WWW_DATA_GROUP_ID=1000!WWW_DATA_GROUP_ID=$(id -u))!g' $dockerDevRoot/.env
 
 # create .composer directory
 mkdir -p $projectRoot/app/.composer
