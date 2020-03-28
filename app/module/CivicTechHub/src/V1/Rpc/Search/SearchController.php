@@ -8,6 +8,8 @@ use Laminas\Mvc\Controller\AbstractActionController;
 
 class SearchController extends AbstractActionController
 {
+    const DefaultLimit = 5;
+
     const EntityCountry = 'country';
     const EntityGroup = 'group';
     const EntityTopic = 'topic';
@@ -43,24 +45,26 @@ class SearchController extends AbstractActionController
     {
         $phrase = $this->getPhrase();
         $entities = $this->getFilteredUniqueEntities();
+        $limit = $this->getLimit();
 
-        return $this->buildResponse($phrase, $entities);
+        return $this->buildResponse($phrase, $entities, $limit);
     }
 
-    private function buildResponse(string $phrase, array $entities)
+    private function buildResponse(string $phrase, array $entities, $limit)
     {
         $response = [
             'phrase' => $phrase,
             'results' => []
         ];
         if (in_array(self::EntityCountry, $entities)) {
-            $response['results'][self::EntityCountry] = $this->countryRepository->fetchListWithIdAndNameForSearchphrase($phrase);
+            $response['results'][self::EntityCountry] = $this->countryRepository->fetchForSearchphrase($phrase, $limit);
         }
         if (in_array(self::EntityGroup, $entities)) {
-            $response['results'][self::EntityGroup] = $this->groupRepository->fetchListForSearchphrase($phrase);
+            $this->groupRepository->embeddTopicsAsDependency();
+            $response['results'][self::EntityGroup] = $this->groupRepository->fetchForSearchphrase($phrase, $limit);
         }
         if (in_array(self::EntityTopic, $entities)) {
-           $response['results'][self::EntityTopic] = $this->topicRepository->fetchListWithIdAndNameForSearchphrase($phrase);
+           $response['results'][self::EntityTopic] = $this->topicRepository->fetchForSearchphrase($phrase, $limit);
         }
 
         return $response;
@@ -82,5 +86,17 @@ class SearchController extends AbstractActionController
         }
 
         return $filteredUniqueEntities;
+    }
+
+    private function getLimit()
+    {
+        $inputFilter = $this->getEvent()->getParam('Laminas\ApiTools\ContentValidation\InputFilter');
+        $limit = $inputFilter->getValue('limit');
+
+        if (empty($limit)) {
+            $limit = self::DefaultLimit;
+        }
+
+        return $limit;
     }
 }

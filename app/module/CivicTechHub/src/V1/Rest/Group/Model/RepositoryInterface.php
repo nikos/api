@@ -24,5 +24,9 @@ interface RepositoryInterface
 
     public function getCollection(): GroupCollection;
 
-    public function fetchListForSearchphrase(string $searchphrase): array;
+    /**
+     * @param string $searchphrase
+     * @return GroupEntity[]
+     */
+    public function fetchForSearchphrase(string $searchphrase, int $limit): array;
 }

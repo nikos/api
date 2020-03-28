@@ -68,14 +68,15 @@ class DatabaseRepository extends AbstractDatabaseRepository implements Repositor
         return $groupIds;
     }
 
-    public function fetchListWithIdAndNameForSearchphrase(string $searchphrase): array
+    public function fetchForSearchphrase(string $searchphrase, int $limit): array
     {
         $select = $this->getSelect();
         $select->columns(['id', 'name']);
         $select->where((new Where())->like('name', '%' . $searchphrase . '%'));
         $select->order(['name' => 'ASC']);
+        $select->limit($limit);
 
-        return $this->fetchRowsWithSelect($select);
+        return $this->fetchAllEntitiesWithSelect($select);
     }
 
     private function fetchAllTopicIdsForGroupIdsGroupedByGroupId(array $groupIds)

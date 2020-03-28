@@ -366,6 +366,25 @@ return [
                 'name' => 'entities',
                 'field_type' => 'string',
             ],
+            3 => [
+                'required' => false,
+                'validators' => [
+                    0 => [
+                        'name' => \Laminas\Validator\Regex::class,
+                        'options' => [
+                            'pattern' => '/^[1-9]{1}[0-9]*$/',
+                        ],
+                    ],
+                ],
+                'filters' => [
+                    0 => [
+                        'name' => \Zend\Filter\StringTrim::class,
+                        'options' => [],
+                    ],
+                ],
+                'name' => 'limit',
+                'field_type' => 'string',
+            ],
         ],
     ],
     'controllers' => [
