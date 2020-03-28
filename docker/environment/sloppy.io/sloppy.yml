@@ -3,7 +3,7 @@ project: "civic-tech-hub"
 services:
   api:
     php-apache:
-      image: "geiru/civictechhub-api-php-apache:0.0.6"
+      image: "geiru/civictechhub-api-php-apache:0.0.8"
       instances: 1
       mem: 256
       domain: "civictechhub.sloppy.zone"
@@ -16,7 +16,7 @@ services:
         - MYSQL_PASSWORD: "$MYSQL_PASSWORD"
         - API_CORS_ALLOWED_ORIGIN: "$API_CORS_ALLOWED_ORIGIN"
     db:
-      image: "geiru/civictechhub-api-db:0.0.5"
+      image: "geiru/civictechhub-api-db:0.0.7"
       instances: 1
       mem: 512
       volumes:
