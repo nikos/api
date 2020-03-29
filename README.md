@@ -18,6 +18,7 @@ Start/Stop:
 * `make start` (or `docker/environment/dev/scripts/start.sh`)
 * `make stop` (or `docker/environment/dev/scripts/stop.sh`)
 
+Swagger documentation available at http://localhost:8080/api-tools/swagger.
 The api can be accessed through http://localhost:8080 (or whatever `HOST_HTTP_PORT` you set in .env).
 The mysql database can be accessed through localhost:3306 (or whatever `HOST_MYSQL_PORT` you set in .env)
 
