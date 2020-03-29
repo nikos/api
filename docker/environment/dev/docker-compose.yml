@@ -17,6 +17,7 @@ services:
       - MYSQL_USER=${MYSQL_USER}
       - MYSQL_PASSWORD=${MYSQL_PASSWORD}
       - API_CORS_ALLOWED_ORIGIN=${API_CORS_ALLOWED_ORIGIN}
+      - AIRTABLE_API_KEY=${AIRTABLE_API_KEY}
     volumes:
      - ../../../app:/var/www
     extra_hosts:

@@ -6,23 +6,25 @@ from airtable import Airtable
 from sqlalchemy import create_engine, text, Table, Column, Integer, String, MetaData, ForeignKey
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.sql import select
+from os import environ
 
-API_KEY = ''  # your API KEY
-MYSQL_DB_USER = "dev"
-MYSQL_DB_PASS = "dev"
-MYSQL_DB_HOST = 'localhost'
-MYSQL_DB_PORT = '3306'
+API_KEY = environ['AIRTABLE_API_KEY']  # your API KEY
+MYSQL_DB_USER = environ['MYSQL_USER']
+MYSQL_DB_PASS = environ['MYSQL_PASSWORD']
+MYSQL_DB_HOST = environ['MYSQL_HOSTNAME']
+MYSQL_DB_PORT = environ['MYSQL_PORT']
+MYSQL_DB_SCHEMA = environ['MYSQL_DATABASE']
 
 countries_dict = {}
 topics_dict = {}
 
 
 def main():
-    print('- Connecting to MySql dev Database')
+    print('- Connecting to MySql Database ' + MYSQL_DB_SCHEMA)
     try:
         mysql_engine = create_engine(
             'mysql+pymysql://' + MYSQL_DB_USER + ':' + MYSQL_DB_PASS + '@'
-            + MYSQL_DB_HOST + ':' + MYSQL_DB_PORT + '/dev', echo=False
+            + MYSQL_DB_HOST + ':' + MYSQL_DB_PORT + '/' + MYSQL_DB_SCHEMA, echo=False
         )
         mysql_engine._metadata = MetaData(bind=mysql_engine)
         mysql_connection = mysql_engine.connect()
@@ -45,9 +47,9 @@ def main():
                                   Column('id', Integer, primary_key=True),
                                   Column('topic', String),
                                   )
-        print('- Connecting to MySql dev Database successfully')
+        print('- Connecting to MySql Database ' + MYSQL_DB_SCHEMA + ' successfully')
     except Exception as exception:
-        print('- Error connecting to MySql dev Database')
+        print('- Error connecting to MySql Database ' + MYSQL_DB_SCHEMA )
         print(exception)
         exit()
 
