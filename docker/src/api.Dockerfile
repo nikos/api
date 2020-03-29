@@ -6,7 +6,7 @@ FROM composer:1.10 AS build
 
 COPY ./app /app
 # TODO check if dir exists otherwisewarn; this is needed for authentication with github when installing dependencies
-COPY ./app/.composer /tmp
+#COPY ./app/.composer /tmp
 #TODO add --no-dev after resolving issue with  Uncaught Error: Undefined constant 'ApiTools\VERSION'
 RUN composer install --ignore-platform-reqs --prefer-dist
 RUN composer development-disable

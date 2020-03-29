@@ -1,0 +1,40 @@
+version: "3.4"
+services:
+  php-fpm:
+    build:
+      context: ../../../
+      dockerfile: docker/src/aws.Dockerfile-fpm
+    ports:
+     - 9000:9000
+    container_name: php-fpm
+  nginx:
+    build:
+      context: ../../../
+      dockerfile: docker/src/aws.Dockerfile-nginx
+    ports:
+      - 8080:80
+    depends_on:
+      - php-fpm
+    links:
+      - php-fpm
+    environment:
+      - MYSQL_ROOT_PASSWORD=test
+      - MYSQL_DATABASE=test
+      - MYSQL_USER=test
+      - MYSQL_PASSWORD=test    
+  db:
+    build:
+      context: ../../../
+      dockerfile: docker/src/db.Dockerfile
+      target: development
+    ports:
+      - 3306:3306
+    environment:
+      - MYSQL_ROOT_PASSWORD=test
+      - MYSQL_DATABASE=test
+      - MYSQL_USER=test
+      - MYSQL_PASSWORD=test
+
+
+
+
