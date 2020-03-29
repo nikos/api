@@ -1,6 +1,9 @@
 #!/usr/bin/env bash
 
-projectRoot=$(readlink -f $(dirname $0)/../../../..)
+case "$OSTYPE" in
+  darwin*) projectRoot=$(stat -f $(dirname $0)/../../../..) ;;
+  *) projectRoot=$(readlink -f $(dirname $0)/../../../..) ;;
+esac
 dockerDevRoot=$projectRoot/docker/environment/dev
 
 # copy .env file and replace user and group id
