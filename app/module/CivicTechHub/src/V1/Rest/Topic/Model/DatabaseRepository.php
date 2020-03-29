@@ -5,6 +5,7 @@ namespace CivicTechHub\V1\Rest\Topic\Model;
 
 use Application\Model\AbstractDatabaseRepository;
 use CivicTechHub\V1\Rest\Topic\TopicEntity;
+use Laminas\Db\Sql\Predicate\Expression;
 use Laminas\Db\Sql\Select;
 use Laminas\Db\Sql\Where;
 
@@ -12,12 +13,21 @@ class DatabaseRepository extends AbstractDatabaseRepository implements Repositor
 {
     public function fetchById(int $id)
     {
-        return $this->fetchEntityByFieldValue('id', $id);
+        $where = new Where();
+        $where->equalTo('id', $id);
+
+        $select = $this->buildSelectIncludingCountGroups();
+        $select->where($where);
+
+        return $this->fetchEntityWithSelect($select);
     }
 
     public function fetchAll()
     {
-        return $this->fetchAllEntities();
+        $select = $this->buildSelectIncludingCountGroups();
+        $select->order(['count_groups' => 'DESC']);
+
+        return $this->fetchAllEntitiesWithSelect($select);
     }
 
     public function fetchAllForGroupIdsIndexedByGroupId(array $groupIds)
@@ -68,14 +78,14 @@ class DatabaseRepository extends AbstractDatabaseRepository implements Repositor
         return $groupIds;
     }
 
-    public function fetchListWithIdAndNameForSearchphrase(string $searchphrase): array
+    public function fetchForSearchphrase(string $searchphrase, int $limit): array
     {
-        $select = $this->getSelect();
-        $select->columns(['id', 'name']);
+        $select = $this->buildSelectIncludingCountGroups();
         $select->where((new Where())->like('name', '%' . $searchphrase . '%'));
-        $select->order(['name' => 'ASC']);
+        $select->order(['count_groups' => 'DESC']);
+        $select->limit($limit);
 
-        return $this->fetchRowsWithSelect($select);
+        return $this->fetchAllEntitiesWithSelect($select);
     }
 
     private function fetchAllTopicIdsForGroupIdsGroupedByGroupId(array $groupIds)
@@ -116,5 +126,19 @@ class DatabaseRepository extends AbstractDatabaseRepository implements Repositor
         }
 
         return $topicsIndexedById;
+    }
+
+    private function buildSelectIncludingCountGroups()
+    {
+        $select = new Select('group_topic');
+        $select->join('topic', 'topic.id = group_topic.topic_id', Select::SQL_STAR, Select::JOIN_LEFT);
+        $select->columns([
+            'id' => 'group_topic.topic_id',
+            'name' => 'topic.name',
+            'count_groups' => new Expression('count(*)')
+        ], false);
+        $select->group('group_topic.topic_id');
+
+        return $select;
     }
 }

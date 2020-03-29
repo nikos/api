@@ -17,5 +17,9 @@ interface RepositoryInterface
      */
     public function fetchAllByIdsOrderedByName(array $ids);
 
-    public function fetchListWithIdAndNameForSearchphrase(string $searchphrase): array;
+    /**
+     * @param string $searchphrase
+     * @return CountryEntity[]
+     */
+    public function fetchForSearchphrase(string $searchphrase, int $limit): array;
 }

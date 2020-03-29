@@ -12,4 +12,9 @@ class TopicEntity
      * @var string
      */
     public $name;
+
+    /**
+     * @var int
+     */
+    public $countGroups;
 }

@@ -7,6 +7,11 @@ use CivicTechHub\V1\Rest\Group\GroupEntity;
 
 interface RepositoryInterface
 {
+    public function embeddAllDependencies();
+    public function embeddCountryAsDependency();
+    public function embeddTopicsAsDependency();
+    public function embeddServiceLinksAsDependency();
+
     public function fetchAllCountryIds(): array;
 
     /**
@@ -19,5 +24,9 @@ interface RepositoryInterface
 
     public function getCollection(): GroupCollection;
 
-    public function fetchListWithIdAndNameForSearchphrase(string $searchphrase): array;
+    /**
+     * @param string $searchphrase
+     * @return GroupEntity[]
+     */
+    public function fetchForSearchphrase(string $searchphrase, int $limit): array;
 }

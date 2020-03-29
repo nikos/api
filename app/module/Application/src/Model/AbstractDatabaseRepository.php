@@ -61,6 +61,21 @@ abstract class AbstractDatabaseRepository
         return $resultSet->current();
     }
 
+    /**
+     * @param Select $select
+     * @return mixed
+     */
+    protected function fetchEntityWithSelect(Select $select)
+    {
+        $resultSet = $this->tableGateway->selectWith($select);
+
+        if ($resultSet->count() < 1) {
+            return null;
+        }
+
+        return $resultSet->current();
+    }
+
     protected function getSelect()
     {
         $sql = $this->tableGateway->getSql();
@@ -110,17 +125,5 @@ abstract class AbstractDatabaseRepository
         }
 
         return iterator_to_array($resultSet);
-    }
-
-    protected function fetchRowsWithSelect(Select $select)
-    {
-        $statement = $this->tableGateway->getSql()->prepareStatementForSqlObject($select);
-        $resultSet = $statement->execute();
-        $rows = [];
-        foreach ($resultSet as $row) {
-            $rows[] = $row;
-        }
-
-        return $rows;
     }
 }

@@ -25,6 +25,7 @@ class GroupResource extends AbstractResourceListener
      */
     public function fetch($id)
     {
+        $this->repository->embeddAllDependencies();
         return $this->repository->fetchById($id);
     }
 
@@ -46,6 +47,7 @@ class GroupResource extends AbstractResourceListener
             $this->repository->addFilterByTopicsForCollection($filteredValues['topicIds']);
         }
 
+        $this->repository->embeddAllDependencies();
         return $this->repository->getCollection();
     }
 }

@@ -29,5 +29,5 @@ interface RepositoryInterface
      */
     public function fetchAllGroupIdsForTopicIds($topicIds);
 
-    public function fetchListWithIdAndNameForSearchphrase(string $searchphrase): array;
+    public function fetchForSearchphrase(string $searchphrase, int $limit): array;
 }

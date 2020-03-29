@@ -14,9 +14,13 @@ class DatabaseRepository extends AbstractDatabaseRepository implements Repositor
 {
     private $collectionFilters = [];
 
-    private $collectionCountriesIndexedById = [];
-    private $collectionTopicsIndexedByGroupId = [];
-    private $collectionServiceLinksIndexedByGroupId = [];
+    private $embeddDependencyCountry = false;
+    private $embeddDependencyServiceLinks = false;
+    private $embeddDependencyTopics = false;
+
+    private $dedendencyMapForCountries = [];
+    private $dependencyMapForTopics = [];
+    private $dependencyMapForServiceLinks = [];
 
     /**
      * @var \CivicTechHub\V1\Rest\Country\Model\RepositoryInterface
@@ -44,6 +48,29 @@ class DatabaseRepository extends AbstractDatabaseRepository implements Repositor
         parent::__construct($tableGateway);
     }
 
+    public function embeddAllDependencies()
+    {
+        $this->embeddCountryAsDependency();
+        $this->embeddServiceLinksAsDependency();
+        $this->embeddTopicsAsDependency();
+    }
+
+    public function embeddCountryAsDependency()
+    {
+        $this->embeddDependencyCountry = true;
+    }
+
+    public function embeddServiceLinksAsDependency()
+    {
+        $this->embeddDependencyServiceLinks = true;
+    }
+
+    public function embeddTopicsAsDependency()
+    {
+        $this->embeddDependencyTopics = true;
+    }
+
+
     public function fetchAllCountryIds(): array
     {
         $select = $this->getSelect();
@@ -68,20 +95,8 @@ class DatabaseRepository extends AbstractDatabaseRepository implements Repositor
             return $group;
         }
 
-        /* @var GroupEntity $group */
-        if (! empty($group->countryId)) {
-            $group->country = $this->countryRepository->fetchById($group->countryId);
-        }
-
-        $topics = $this->topicRepository->fetchAllForGroupIdsIndexedByGroupId([$group]);
-        if (! empty($topics[$group->id])) {
-            $group->topics = $topics[$group->id];
-        }
-
-        $serviceLinks = $this->serviceLinkRepository->fetchAllByGroupId($group->id);
-        if (! empty($serviceLinks)) {
-            $group->serviceLinks = $serviceLinks;
-        }
+        $this->collectDependenciesForGroups([$group]);
+        $this->setDependenciesInGroupEntity($group);
 
         return $group;
     }
@@ -101,41 +116,38 @@ class DatabaseRepository extends AbstractDatabaseRepository implements Repositor
         $select = $this->getSelect();
         $select->where($this->buildWhereForCollection());
 
-        $this->collectionCountriesIndexedById = [];
+        $this->dedendencyMapForCountries = [];
         $paginatorAdapter = $this->getEnhanceableItemPaginatorAdapterForSelect($select);
         $paginatorAdapter->setBeforeEnhanceItemsCallback(function ($groups) {
-            $this->collectionCountriesIndexedById = $this->fetchAllCountriesIndexedByIdForGroups($groups);
-
-            $groupIds = array_map(function (GroupEntity $group) {
-                return $group->id;
-            }, $groups);
-            $this->collectionTopicsIndexedByGroupId = $this->topicRepository->fetchAllForGroupIdsIndexedByGroupId($groupIds);
-            $this->collectionServiceLinksIndexedByGroupId = $this->serviceLinkRepository->fetchAllForGroupIdsIndexedByGroupId($groupIds);
+            $this->collectDependenciesForGroups($groups);
         });
         $paginatorAdapter->setEnhanceItemFunction(function(GroupEntity $group) {
-            if ($group->countryId && isset($this->collectionCountriesIndexedById[$group->countryId])) {
-                $group->country = $this->collectionCountriesIndexedById[$group->countryId];
-            }
-            if (! empty($this->collectionTopicsIndexedByGroupId[$group->id])) {
-                $group->topics = $this->collectionTopicsIndexedByGroupId[$group->id];
-            }
-            if (! empty($this->collectionServiceLinksIndexedByGroupId[$group->id])) {
-                $group->serviceLinks = $this->collectionServiceLinksIndexedByGroupId[$group->id];
-            }
+            $this->setDependenciesInGroupEntity($group);
             return $group;
         });
 
         return new GroupCollection($paginatorAdapter);
     }
 
-    public function fetchListWithIdAndNameForSearchphrase(string $searchphrase): array
+    public function fetchForSearchphrase(string $searchphrase, int $limit): array
     {
         $select = $this->getSelect();
-        $select->columns(['id', 'name']);
         $select->where((new Where())->like('name', '%' . $searchphrase . '%'));
         $select->order(['name' => 'ASC']);
+        $select->limit($limit);
 
-        return $this->fetchRowsWithSelect($select);
+        $groups = $this->fetchAllEntitiesWithSelect($select);
+
+        if (empty($groups)) {
+            return [];
+        }
+
+        $this->collectDependenciesForGroups($groups);
+        foreach($groups as $group) {
+            $this->setDependenciesInGroupEntity($group);
+        }
+
+        return $groups;
     }
 
     private function buildWhereForCollection()
@@ -169,5 +181,42 @@ class DatabaseRepository extends AbstractDatabaseRepository implements Repositor
         }
 
         return $countriesIndexedById;
+    }
+
+    /**
+     * @param GroupEntity[] $groups
+     */
+    private function collectDependenciesForGroups(array $groups)
+    {
+        if ($this->embeddDependencyCountry) {
+            $this->dedendencyMapForCountries = $this->fetchAllCountriesIndexedByIdForGroups($groups);
+        }
+
+        if (! $this->embeddDependencyTopics && ! $this->embeddDependencyServiceLinks) {
+            return;
+        }
+
+        $groupIds = array_map(function (GroupEntity $group) {
+            return $group->id;
+        }, $groups);
+        if ($this->embeddDependencyServiceLinks) {
+            $this->dependencyMapForServiceLinks = $this->serviceLinkRepository->fetchAllForGroupIdsIndexedByGroupId($groupIds);
+        }
+        if ($this->embeddDependencyTopics) {
+            $this->dependencyMapForTopics = $this->topicRepository->fetchAllForGroupIdsIndexedByGroupId($groupIds);
+        }
+    }
+
+    private function setDependenciesInGroupEntity(GroupEntity $group)
+    {
+        if ($this->embeddDependencyCountry && $group->countryId && isset($this->dedendencyMapForCountries[$group->countryId])) {
+            $group->country = $this->dedendencyMapForCountries[$group->countryId];
+        }
+        if ($this->embeddDependencyServiceLinks && ! empty($this->dependencyMapForServiceLinks[$group->id])) {
+            $group->serviceLinks = $this->dependencyMapForServiceLinks[$group->id];
+        }
+        if ($this->embeddDependencyTopics && ! empty($this->dependencyMapForTopics[$group->id])) {
+            $group->topics = $this->dependencyMapForTopics[$group->id];
+        }
     }
 }
