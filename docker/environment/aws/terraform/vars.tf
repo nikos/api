@@ -46,3 +46,8 @@ variable "password" {
     type = string
     default = ""
 }
+
+variable "domain" {
+  type = string
+  default = "c19ctcl.org"
+}

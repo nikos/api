@@ -27,8 +27,8 @@ resource "aws_alb_target_group" "myapp" {
 
 resource "aws_alb_listener" "myapp" {
   load_balancer_arn = aws_alb.myapp.arn
-  port = "80"
-  protocol = "HTTP"
+  port = "443"
+  protocol = "HTTPS"
 
   default_action {
     target_group_arn = aws_alb_target_group.myapp.arn
