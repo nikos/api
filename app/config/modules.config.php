@@ -26,6 +26,7 @@ return [
     'Laminas\\ApiTools\\Rpc',
     'Laminas\\ApiTools\\Versioning',
     'ZfrCors',
+    'Laminas\ApiTools\Documentation\Swagger',
     'Application',
     'CivicTechHub',
 ];
