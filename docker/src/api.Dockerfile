@@ -23,7 +23,7 @@ RUN apt-get update \
 
 # install python and libraries for import scripts
 RUN apt-get install -y python3 python3-pip \
- && pip3 install airtable-python-wrapper
+ && pip3 install airtable-python-wrapper sqlalchemy pymysql
 
 # remove the content of /var/lib/apt/lists after installing system dependencies, as these files are not needed anymore
 RUN rm -r /var/lib/apt/lists/*
