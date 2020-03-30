@@ -9,6 +9,9 @@ $laminasMvcApplication = \Laminas\Mvc\Application::init(require __DIR__ . '/../c
 $serviceManager = $laminasMvcApplication->getServiceManager();
 
 $consoleApplication = new Application();
-$consoleApplication->add($serviceManager->get(\Application\Console\ImportFromCsvCommand::class));
+
+// add commands here
+// see https://symfony.com/doc/current/console.html
+// $consoleApplication->add($serviceManager->get(\Application\Console\ExampleCommand::class));
 
 $consoleApplication->run();
