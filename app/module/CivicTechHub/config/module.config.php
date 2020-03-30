@@ -56,6 +56,16 @@ return [
                     ],
                 ],
             ],
+            'civic-tech-hub.rpc.tmp-database-update' => [
+                'type' => 'Segment',
+                'options' => [
+                    'route' => '/tmp-database-update',
+                    'defaults' => [
+                        'controller' => 'CivicTechHub\\V1\\Rpc\\TmpDatabaseUpdate\\Controller',
+                        'action' => 'tmpDatabaseUpdate',
+                    ],
+                ],
+            ],
         ],
     ],
     'api-tools-versioning' => [
@@ -65,6 +75,7 @@ return [
             2 => 'civic-tech-hub.rest.service-link',
             3 => 'civic-tech-hub.rest.topic',
             4 => 'civic-tech-hub.rpc.search',
+            5 => 'civic-tech-hub.rpc.tmp-database-update',
         ],
     ],
     'api-tools-rest' => [
@@ -151,6 +162,7 @@ return [
             'CivicTechHub\\V1\\Rest\\ServiceLink\\Controller' => 'HalJson',
             'CivicTechHub\\V1\\Rest\\Topic\\Controller' => 'HalJson',
             'CivicTechHub\\V1\\Rpc\\Search\\Controller' => 'Json',
+            'CivicTechHub\\V1\\Rpc\\TmpDatabaseUpdate\\Controller' => 'Json',
         ],
         'accept_whitelist' => [
             'CivicTechHub\\V1\\Rest\\Country\\Controller' => [
@@ -178,6 +190,11 @@ return [
                 1 => 'application/json',
                 2 => 'application/*+json',
             ],
+            'CivicTechHub\\V1\\Rpc\\TmpDatabaseUpdate\\Controller' => [
+                0 => 'application/vnd.civic-tech-hub.v1+json',
+                1 => 'application/json',
+                2 => 'application/*+json',
+            ],
         ],
         'content_type_whitelist' => [
             'CivicTechHub\\V1\\Rest\\Country\\Controller' => [
@@ -197,6 +214,10 @@ return [
                 1 => 'application/json',
             ],
             'CivicTechHub\\V1\\Rpc\\Search\\Controller' => [
+                0 => 'application/vnd.civic-tech-hub.v1+json',
+                1 => 'application/json',
+            ],
+            'CivicTechHub\\V1\\Rpc\\TmpDatabaseUpdate\\Controller' => [
                 0 => 'application/vnd.civic-tech-hub.v1+json',
                 1 => 'application/json',
             ],
@@ -263,6 +284,9 @@ return [
         ],
         'CivicTechHub\\V1\\Rpc\\Search\\Controller' => [
             'GET' => 'CivicTechHub\\V1\\Rpc\\Search\\Validator\\GET',
+        ],
+        'CivicTechHub\\V1\\Rpc\\TmpDatabaseUpdate\\Controller' => [
+            'GET' => 'CivicTechHub\\V1\\Rpc\\TmpDatabaseUpdate\\Validator\\GET',
         ],
     ],
     'input_filter_specs' => [
@@ -335,9 +359,9 @@ return [
                     0 => [
                         'name' => \Laminas\Validator\StringLength::class,
                         'options' => [
-                            'min' => 2
-                        ]
-                    ]
+                            'min' => 2,
+                        ],
+                    ],
                 ],
                 'filters' => [],
                 'name' => 'phrase',
@@ -386,10 +410,55 @@ return [
                 'field_type' => 'string',
             ],
         ],
+        'CivicTechHub\\V1\\Rpc\\TmpDatabaseUpdate\\Validator\\GET' => [
+            0 => [
+                'required' => true,
+                'validators' => [
+                    0 => [
+                        'name' => \Laminas\Validator\NotEmpty::class,
+                    ],
+                ],
+                'filters' => [
+                    0 => [
+                        'name' => \Zend\Filter\StringTrim::class,
+                        'options' => [],
+                    ],
+                ],
+                'name' => 'token',
+                'field_type' => 'string',
+            ],
+            1 => [
+                'required' => false,
+                'validators' => [
+                ],
+                'filters' => [
+                    0 => [
+                        'name' => \Zend\Filter\StringTrim::class,
+                        'options' => [],
+                    ],
+                ],
+                'name' => 'migrate',
+                'field_type' => 'string',
+            ],
+            2 => [
+                'required' => false,
+                'validators' => [
+                ],
+                'filters' => [
+                    0 => [
+                        'name' => \Zend\Filter\StringTrim::class,
+                        'options' => [],
+                    ],
+                ],
+                'name' => 'import',
+                'field_type' => 'string',
+            ],
+        ],
     ],
     'controllers' => [
         'factories' => [
             'CivicTechHub\\V1\\Rpc\\Search\\Controller' => \CivicTechHub\V1\Rpc\Search\SearchControllerFactory::class,
+            'CivicTechHub\\V1\\Rpc\\TmpDatabaseUpdate\\Controller' => \CivicTechHub\V1\Rpc\TmpDatabaseUpdate\TmpDatabaseUpdateControllerFactory::class,
         ],
     ],
     'api-tools-rpc' => [
@@ -399,6 +468,13 @@ return [
                 0 => 'GET',
             ],
             'route_name' => 'civic-tech-hub.rpc.search',
+        ],
+        'CivicTechHub\\V1\\Rpc\\TmpDatabaseUpdate\\Controller' => [
+            'service_name' => 'TmpDatabaseUpdate',
+            'http_methods' => [
+                0 => 'GET',
+            ],
+            'route_name' => 'civic-tech-hub.rpc.tmp-database-update',
         ],
     ],
 ];

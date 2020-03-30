@@ -18,6 +18,7 @@ services:
       - MYSQL_PASSWORD=${MYSQL_PASSWORD}
       - API_CORS_ALLOWED_ORIGIN=${API_CORS_ALLOWED_ORIGIN}
       - AIRTABLE_API_KEY=${AIRTABLE_API_KEY}
+      - TMP_DATABASE_UPDATE_TOKEN=${TMP_DATABASE_UPDATE_TOKEN}
     volumes:
      - ../../../app:/var/www
     extra_hosts:
