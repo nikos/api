@@ -72,7 +72,7 @@ def main():
                                     )
         mysql_topic_table = Table('topic', mysql_engine._metadata,
                                   Column('id', Integer, primary_key=True),
-                                  Column('topic', String),
+                                  Column('name', String),
                                   )
         mysql_service_link_table = Table('service_link', mysql_engine._metadata,
                                          Column('id', Integer, primary_key=True),
@@ -117,7 +117,7 @@ def main():
         s = select([mysql_topic_table])
         result = mysql_connection.execute(s)
         for row in result:
-            topics_dict[row['id']] = row['topic']
+            topics_dict[row['id']] = row['name']
     except SQLAlchemyError as sql_alchemy_exception:
         error = str(sql_alchemy_exception.__dict__['orig'])
         print('- Error loading topics_dict from topic table')
