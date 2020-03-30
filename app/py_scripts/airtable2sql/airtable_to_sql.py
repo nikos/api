@@ -1,7 +1,7 @@
 # CivicTechHub AIRTABLE TO SQL
 # by Franco Morero (https://github.com/francomor)
 
-# This auto populate the tables group, group_topic and service_link
+# This auto populate the tables topic, group, group_topic and service_link
 # in Mysql database taking the data from Airtable
 
 import enum
@@ -93,6 +93,7 @@ def main():
         groups_records = airtable_groups_table.get_all()
         airtable_country_table = Airtable('app4FKBWUILUmUsE1', 'Country', api_key=API_KEY)
         airtable_topics_table = Airtable('app4FKBWUILUmUsE1', 'Topics', api_key=API_KEY)
+        topics_records = airtable_topics_table.get_all()
         airtable_resources_table = Airtable('app4FKBWUILUmUsE1', 'Resources', api_key=API_KEY)
         print('- Get tables from Airtable successfully')
     except Exception as exception:
@@ -100,29 +101,9 @@ def main():
         print(exception)
         exit()
 
-    print('- Load countries_dict from country table')
-    try:
-        s = select([mysql_country_table])
-        result = mysql_connection.execute(s)
-        for row in result:
-            countries_dict[row['id']] = row['name']
-    except SQLAlchemyError as sql_alchemy_exception:
-        error = str(sql_alchemy_exception.__dict__['orig'])
-        print('- Error loading countries_dict from country table')
-        print(error)
-        exit()
-
-    print('- Load topics_dict from topic table')
-    try:
-        s = select([mysql_topic_table])
-        result = mysql_connection.execute(s)
-        for row in result:
-            topics_dict[row['id']] = row['name']
-    except SQLAlchemyError as sql_alchemy_exception:
-        error = str(sql_alchemy_exception.__dict__['orig'])
-        print('- Error loading topics_dict from topic table')
-        print(error)
-        exit()
+    populate_topic_table(mysql_connection, mysql_topic_table, topics_records)
+    load_countries_dict_from_country_mysql_table(mysql_connection, mysql_country_table)
+    load_topics_dict_from_topic_mysql_table(mysql_connection, mysql_topic_table)
 
     print('- Start population tables')
     print('- Groups records fetched: ' + str(len(groups_records)))
@@ -160,13 +141,77 @@ def main():
 
 
 def exist_group_in_db(mysql_connection, mysql_group_table, group_name):
-    s = select([mysql_group_table.c.name]).where(mysql_group_table.c.name == group_name)
-    result = mysql_connection.execute(s)
-    row = result.fetchone()
-    if row:
-        return True
-    else:
-        return False
+    try:
+        s = select([mysql_group_table.c.name]).where(mysql_group_table.c.name == group_name)
+        result = mysql_connection.execute(s)
+        row = result.fetchone()
+        if row:
+            return True
+        else:
+            return False
+    except SQLAlchemyError as sql_alchemy_exception:
+        error = str(sql_alchemy_exception.__dict__['orig'])
+        print(error)
+        exit()
+
+
+def exist_topic_in_db(mysql_connection, mysql_topic_table, topic_name):
+    try:
+        s = select([mysql_topic_table.c.name]).where(mysql_topic_table.c.name == topic_name)
+        result = mysql_connection.execute(s)
+        row = result.fetchone()
+        if row:
+            return True
+        else:
+            return False
+    except SQLAlchemyError as sql_alchemy_exception:
+        error = str(sql_alchemy_exception.__dict__['orig'])
+        print(error)
+        exit()
+
+
+def populate_topic_table(mysql_connection, mysql_table, topics_records):
+    print('- Start population topic table')
+    print('- Topic records fetched: ' + str(len(topics_records)))
+    for count, record in enumerate(topics_records, start=1):
+        if 'Name' in record['fields']:
+            topic_name = record['fields']['Name']
+            print('- Parcing topic ' + str(count) + ' named ' + topic_name)
+            if not exist_topic_in_db(mysql_connection, mysql_table, topic_name):
+                insert = mysql_table.insert().values(name=topic_name)
+                insert_in_mysql(mysql_connection, insert)
+                print(topic_name + ' added to db')
+            else:
+                print(topic_name + ' already exist in db')
+    print('- Finish population topic table successfully')
+
+
+def load_countries_dict_from_country_mysql_table(mysql_connection, mysql_table):
+    print('- Load countries_dict from country table')
+    try:
+        s = select([mysql_table])
+        result = mysql_connection.execute(s)
+        for row in result:
+            countries_dict[row['id']] = row['name']
+    except SQLAlchemyError as sql_alchemy_exception:
+        error = str(sql_alchemy_exception.__dict__['orig'])
+        print('- Error loading countries_dict from country table')
+        print(error)
+        exit()
+
+
+def load_topics_dict_from_topic_mysql_table(mysql_connection, mysql_table):
+    print('- Load topics_dict from topic table')
+    try:
+        s = select([mysql_table])
+        result = mysql_connection.execute(s)
+        for row in result:
+            topics_dict[row['id']] = row['name']
+    except SQLAlchemyError as sql_alchemy_exception:
+        error = str(sql_alchemy_exception.__dict__['orig'])
+        print('- Error loading topics_dict from topic table')
+        print(error)
+        exit()
 
 
 def populate_group_table(mysql_connection, mysql_table, group_record, airtable_country_table):
