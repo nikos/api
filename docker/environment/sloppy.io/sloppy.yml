@@ -3,7 +3,7 @@ project: "civic-tech-hub"
 services:
   api:
     php-apache:
-      image: "geiru/civictechhub-api-php-apache:0.0.9"
+      image: "geiru/civictechhub-api-php-apache:0.0.10"
       instances: 1
       mem: 256
       domain: "civictechhub.sloppy.zone"
@@ -15,6 +15,7 @@ services:
         - MYSQL_USER: "$MYSQL_USER"
         - MYSQL_PASSWORD: "$MYSQL_PASSWORD"
         - API_CORS_ALLOWED_ORIGIN: "$API_CORS_ALLOWED_ORIGIN"
+        - AIRTABLE_API_KEY: "$AIRTABLE_API_KEY"
         - TMP_DATABASE_UPDATE_TOKEN: "$TMP_DATABASE_UPDATE_TOKEN"
     db:
       image: "geiru/civictechhub-api-db:0.0.7"
