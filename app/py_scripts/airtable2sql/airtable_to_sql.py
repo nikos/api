@@ -100,22 +100,6 @@ def main():
         print(exception)
         exit()
 
-    print('- Clean group, group_topic and service_link table')
-    try:
-        mysql_connection.execute(mysql_service_link_table.delete())
-        stmt = text('ALTER TABLE `service_link` AUTO_INCREMENT = 1')
-        mysql_connection.execute(stmt)
-        mysql_connection.execute(mysql_group_topic_table.delete())
-        mysql_connection.execute(mysql_group_table.delete())
-        stmt = text('ALTER TABLE `group` AUTO_INCREMENT = 1')
-        mysql_connection.execute(stmt)
-        print('- Clean group, group_topic and service_link successfully')
-    except SQLAlchemyError as sql_alchemy_exception:
-        error = str(sql_alchemy_exception.__dict__['orig'])
-        print('- Error cleaning group, group_topic and service_link table')
-        print(error)
-        exit()
-
     print('- Load countries_dict from country table')
     try:
         s = select([mysql_country_table])
@@ -144,30 +128,45 @@ def main():
     print('- Groups records fetched: ' + str(len(groups_records)))
     for count, record in enumerate(groups_records, start=1):
         if 'Group name' in record['fields']:
-            print('- Parcing group ' + str(count) + ' named ' + record['fields']['Group name'])
-            group_id = populate_group_table(
-                mysql_connection,
-                mysql_group_table,
-                record['fields'],
-                airtable_country_table
-            )
-            if 'Topics' in record['fields']:
-                populate_group_topic_table(
+            group_name = record['fields']['Group name']
+            print('- Parcing group ' + str(count) + ' named ' + group_name)
+            if not exist_group_in_db(mysql_connection, mysql_group_table, group_name):
+                group_id = populate_group_table(
                     mysql_connection,
-                    mysql_group_topic_table,
-                    record['fields']['Topics'],
-                    airtable_topics_table,
-                    group_id
+                    mysql_group_table,
+                    record['fields'],
+                    airtable_country_table
                 )
-            if 'Resources' in record['fields']:
-                populate_service_link_table(
-                    mysql_connection,
-                    mysql_service_link_table,
-                    record['fields']['Resources'],
-                    airtable_resources_table,
-                    group_id
-                )
+                if 'Topics' in record['fields']:
+                    populate_group_topic_table(
+                        mysql_connection,
+                        mysql_group_topic_table,
+                        record['fields']['Topics'],
+                        airtable_topics_table,
+                        group_id
+                    )
+                if 'Resources' in record['fields']:
+                    populate_service_link_table(
+                        mysql_connection,
+                        mysql_service_link_table,
+                        record['fields']['Resources'],
+                        airtable_resources_table,
+                        group_id
+                    )
+                print(group_name + ' added to db')
+            else:
+                print(group_name + ' already exist in db')
     print('- Finish population tables successfully')
+
+
+def exist_group_in_db(mysql_connection, mysql_group_table, group_name):
+    s = select([mysql_group_table.c.name]).where(mysql_group_table.c.name == group_name)
+    result = mysql_connection.execute(s)
+    row = result.fetchone()
+    if row:
+        return True
+    else:
+        return False
 
 
 def populate_group_table(mysql_connection, mysql_table, group_record, airtable_country_table):
