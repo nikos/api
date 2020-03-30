@@ -26,6 +26,13 @@ The mysql database can be accessed through localhost:3306 (or whatever `HOST_MYS
 
 A postman collection and environment for testing the api is included in `example/postman`.
 
+# Database Migrations
+
+We use [Phinx](https://phinx.org/) for database migrations.
+
+To create a migration run `docker-compose run api vendor/bin/phinx create Foo` in folder `docker/environment/dev`.
+To migrate up run `docker-compose run api bin/migrate-database.sh` in folder `docker/environment/dev`.
+
 ## Deployment
 
 ### Build and push image to github docker registry

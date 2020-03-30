@@ -80,6 +80,7 @@ def main():
                                          Column('url', String),
                                          Column('group_id', ForeignKey('group.id')),
                                          Column('type', Enum(ServiceTypes)),
+                                         Column('is_main_link', Integer)
                                          )
         print('- Connecting to MySql Database ' + MYSQL_DB_SCHEMA + ' successfully')
     except Exception as exception:
@@ -256,8 +257,14 @@ def populate_service_link_table(mysql_connection, mysql_table, resources, airtab
             platform = resource_record['Platform']
         else:
             platform = 'Website'
-        service_type = airtable_platforms_to_sql_enums.get(platform, 'Website')
-        insert = mysql_table.insert().values(text=text_value, url=url, group_id=group_id, type=service_type)
+        if platform == 'Main website':
+            service_type = ServiceTypes.website
+            is_main_link = 1
+        else:
+            service_type = airtable_platforms_to_sql_enums.get(platform, 'Website')
+            is_main_link = 0
+
+        insert = mysql_table.insert().values(text=text_value, url=url, group_id=group_id, type=service_type, is_main_link=is_main_link)
         insert_in_mysql(mysql_connection, insert)
 
 
