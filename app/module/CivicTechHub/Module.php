@@ -12,6 +12,7 @@ use Laminas\Hydrator\NamingStrategy\CompositeNamingStrategy;
 use Laminas\Hydrator\NamingStrategy\MapNamingStrategy;
 use Laminas\Hydrator\NamingStrategy\UnderscoreNamingStrategy;
 use Laminas\Hydrator\ObjectPropertyHydrator;
+use Laminas\Hydrator\Strategy\BooleanStrategy;
 use Laminas\ModuleManager\Feature\ServiceProviderInterface;
 use Laminas\ServiceManager\ServiceManager;
 
@@ -88,8 +89,11 @@ class Module implements ApiToolsProviderInterface, ServiceProviderInterface
                 ServiceLink\Model\RepositoryInterface::class => function (ServiceManager $serviceManager) {
                     $dbAdapter = $serviceManager->get('DbAdapterApi');
 
+                    $hydrator = $this->getDefaultDatabaseHydrator();
+                    $hydrator->addStrategy('isMainLink', new BooleanStrategy('1', '0'));
+
                     $resultSetPrototype = new HydratingResultSet();
-                    $resultSetPrototype->setHydrator($this->getDefaultDatabaseHydrator());
+                    $resultSetPrototype->setHydrator($hydrator);
                     $resultSetPrototype->setObjectPrototype(new ServiceLink\ServiceLinkEntity());
 
                     $tableGateway = new TableGateway('service_link', $dbAdapter, null, $resultSetPrototype);

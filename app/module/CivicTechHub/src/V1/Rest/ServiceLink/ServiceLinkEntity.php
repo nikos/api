@@ -36,4 +36,9 @@ class ServiceLinkEntity
      * @var string
      */
     public $type;
+
+    /**
+     * @var bool
+     */
+    public $isMainLink;
 }
