@@ -26,7 +26,7 @@ The mysql database can be accessed through localhost:3306 (or whatever `HOST_MYS
 
 A postman collection and environment for testing the api is included in `example/postman`.
 
-# Database Migrations
+### Database Migrations
 
 We use [Phinx](https://phinx.org/) for database migrations.
 
