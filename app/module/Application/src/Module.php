@@ -8,11 +8,9 @@
 
 namespace Application;
 
-use Application\Console\ImportFromCsvCommand;
 use Laminas\Filter\Callback;
 use Laminas\ModuleManager\Feature\FilterProviderInterface;
 use Laminas\ModuleManager\Feature\ServiceProviderInterface;
-use Laminas\ServiceManager\ServiceManager;
 
 class Module implements ServiceProviderInterface, FilterProviderInterface
 {
@@ -24,13 +22,7 @@ class Module implements ServiceProviderInterface, FilterProviderInterface
     public function getServiceConfig()
     {
         return [
-            'factories'=> [
-                ImportFromCsvCommand::class => function (ServiceManager $serviceManager) {
-                    $dbAdapter = $serviceManager->get('DbAdapterApi');
-
-                    return new ImportFromCsvCommand($dbAdapter);
-                }
-            ]
+            'factories'=> []
         ];
     }
 

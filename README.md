@@ -8,6 +8,8 @@ Requirement:
 1. install [Docker](https://docs.docker.com/install/)
 2. install [Docker Compose](https://docs.docker.com/compose/install/)
     * Min version 1.25.1 is required for Buildkit support
+3. Get an airtable api key (this is needed if you want to populate your database with data from airtable)
+    * https://support.airtable.com/hc/en-us/articles/219046777-How-do-I-get-my-API-key-
 
 Install:
 1. clone this repository
