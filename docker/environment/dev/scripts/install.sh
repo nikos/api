@@ -13,8 +13,26 @@ read airtableApiKey
 
 # copy .env file and replace user and group id
 cp $dockerDevRoot/.env.template $dockerDevRoot/.env
-sed -i "s!WWW_DATA_USER_ID=1000!WWW_DATA_USER_ID=$(id -u)!g" $dockerDevRoot/.env
-sed -i "s!WWW_DATA_GROUP_ID=1000!WWW_DATA_GROUP_ID=$(id -u)!g" $dockerDevRoot/.env
+
+userId=$(id -u)
+groupId=$(id -g)
+
+if [ $userId -eq 0 ] || [ $groupId -eq 0 ]
+then
+    echo "It seems you are running the install script as root. This is not recommended."
+    while true; do
+        read -p "Do you wish to proceed anyways?" yn
+        case $yn in
+            [Yy]* ) break;;
+            [Nn]* ) exit 1;;
+            * ) echo "Please answer yes or no.";;
+        esac
+    done
+else
+    sed -i "s!WWW_DATA_USER_ID=1000!WWW_DATA_USER_ID=$(id -u)!g" $dockerDevRoot/.env
+    sed -i "s!WWW_DATA_GROUP_ID=1000!WWW_DATA_GROUP_ID=$(id -g)!g" $dockerDevRoot/.env
+fi
+
 sed -i "s!AIRTABLE_API_KEY=!AIRTABLE_API_KEY=$airtableApiKey!g" $dockerDevRoot/.env
 
 # create .composer directory
