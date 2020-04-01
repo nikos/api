@@ -29,8 +29,8 @@ then
         esac
     done
 else
-    sed -i "s!WWW_DATA_USER_ID=1000!WWW_DATA_USER_ID=$(id -u)!g" $dockerDevRoot/.env
-    sed -i "s!WWW_DATA_GROUP_ID=1000!WWW_DATA_GROUP_ID=$(id -g)!g" $dockerDevRoot/.env
+    sed -i "s!WWW_DATA_USER_ID=1000!WWW_DATA_USER_ID=$userId!g" $dockerDevRoot/.env
+    sed -i "s!WWW_DATA_GROUP_ID=1000!WWW_DATA_GROUP_ID=$groupId!g" $dockerDevRoot/.env
 fi
 
 sed -i "s!AIRTABLE_API_KEY=!AIRTABLE_API_KEY=$airtableApiKey!g" $dockerDevRoot/.env
