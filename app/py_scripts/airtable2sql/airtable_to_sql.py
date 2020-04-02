@@ -9,6 +9,7 @@ from airtable import Airtable
 from sqlalchemy import create_engine, text, Table, Column, Integer, String, MetaData, ForeignKey, Enum
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.sql import select
+from sqlalchemy.dialects.mysql import insert
 from os import environ
 
 API_KEY = environ['AIRTABLE_API_KEY']  # your API KEY
@@ -17,7 +18,6 @@ MYSQL_DB_PASS = environ['MYSQL_PASSWORD']
 MYSQL_DB_HOST = environ['MYSQL_HOSTNAME']
 MYSQL_DB_PORT = environ['MYSQL_PORT']
 MYSQL_DB_SCHEMA = environ['MYSQL_DATABASE']
-
 
 countries_dict = {}
 topics_dict = {}
@@ -80,7 +80,6 @@ def main():
                                          Column('url', String),
                                          Column('group_id', ForeignKey('group.id')),
                                          Column('type', Enum(ServiceTypes)),
-                                         Column('is_main_link', Integer)
                                          )
         print('- Connecting to MySql Database ' + MYSQL_DB_SCHEMA + ' successfully')
     except Exception as exception:
@@ -105,6 +104,8 @@ def main():
     populate_topic_table(mysql_connection, mysql_topic_table, topics_records)
     load_countries_dict_from_country_mysql_table(mysql_connection, mysql_country_table)
     load_topics_dict_from_topic_mysql_table(mysql_connection, mysql_topic_table)
+    clean_group_topic_table(mysql_connection, mysql_group_topic_table)
+    clean_service_link_table(mysql_connection, mysql_service_link_table)
 
     print('- Start population tables')
     print('- Groups records fetched: ' + str(len(groups_records)))
@@ -113,31 +114,32 @@ def main():
             group_name = record['fields']['Group name']
             print('- Parcing group ' + str(count) + ' named ' + group_name)
             if not exist_group_in_db(mysql_connection, mysql_group_table, group_name):
-                group_id = populate_group_table(
-                    mysql_connection,
-                    mysql_group_table,
-                    record['fields'],
-                    airtable_country_table
-                )
-                if 'Topics' in record['fields']:
-                    populate_group_topic_table(
-                        mysql_connection,
-                        mysql_group_topic_table,
-                        record['fields']['Topics'],
-                        airtable_topics_table,
-                        group_id
-                    )
-                if 'Resources' in record['fields']:
-                    populate_service_link_table(
-                        mysql_connection,
-                        mysql_service_link_table,
-                        record['fields']['Resources'],
-                        airtable_resources_table,
-                        group_id
-                    )
-                print(group_name + ' added to db')
+                print(group_name + ' is adding to db...')
             else:
-                print(group_name + ' already exist in db')
+                print(group_name + ' already exist in db. Updating..')
+            group_id = populate_group_table(
+                mysql_connection,
+                mysql_group_table,
+                record['fields'],
+                airtable_country_table
+            )
+            if 'Topics' in record['fields']:
+                populate_group_topic_table(
+                    mysql_connection,
+                    mysql_group_topic_table,
+                    record['fields']['Topics'],
+                    airtable_topics_table,
+                    group_id
+                )
+            if 'Resources' in record['fields']:
+                populate_service_link_table(
+                    mysql_connection,
+                    mysql_service_link_table,
+                    record['fields']['Resources'],
+                    airtable_resources_table,
+                    group_id
+                )
+
     print('- Finish population tables successfully')
 
 
@@ -179,8 +181,8 @@ def populate_topic_table(mysql_connection, mysql_table, topics_records):
             topic_name = record['fields']['Name']
             print('- Parcing topic ' + str(count) + ' named ' + topic_name)
             if not exist_topic_in_db(mysql_connection, mysql_table, topic_name):
-                insert = mysql_table.insert().values(name=topic_name)
-                insert_in_mysql(mysql_connection, insert)
+                i = insert(mysql_table).values(name=topic_name)
+                insert_in_mysql(mysql_connection, i)
                 print(topic_name + ' added to db')
             else:
                 print(topic_name + ' already exist in db')
@@ -231,9 +233,35 @@ def populate_group_table(mysql_connection, mysql_table, group_record, airtable_c
         if getted_country_id:
             country_id = getted_country_id
 
-    insert = mysql_table.insert().values(name=name, description=description, country_id=country_id, logo_url=logo_url)
-    group_id = insert_in_mysql(mysql_connection, insert)
+    i = insert(mysql_table).values(name=name, description=description, country_id=country_id, logo_url=logo_url)
+    group_id = insert_in_mysql(mysql_connection, i)
     return group_id
+
+
+def clean_group_topic_table(mysql_connection, mysql_group_topic_table):
+    print('- Clean group_topic table')
+    try:
+        mysql_connection.execute(mysql_group_topic_table.delete())
+        print('- Clean group_topic successfully')
+    except SQLAlchemyError as sql_alchemy_exception:
+        error = str(sql_alchemy_exception.__dict__['orig'])
+        print('- Error cleaning group_topic table')
+        print(error)
+        exit()
+
+
+def clean_service_link_table(mysql_connection, mysql_service_link_table):
+    print('- Clean service_link table')
+    try:
+        mysql_connection.execute(mysql_service_link_table.delete())
+        stmt = text('ALTER TABLE `service_link` AUTO_INCREMENT = 1')
+        mysql_connection.execute(stmt)
+        print('- Clean service_link successfully')
+    except SQLAlchemyError as sql_alchemy_exception:
+        error = str(sql_alchemy_exception.__dict__['orig'])
+        print('- Error cleaning service_link table')
+        print(error)
+        exit()
 
 
 def populate_group_topic_table(mysql_connection, mysql_table, topics, airtable_topics_table, group_id):
@@ -241,8 +269,8 @@ def populate_group_topic_table(mysql_connection, mysql_table, topics, airtable_t
         topic_record = airtable_topics_table.get(topic_id)
         topic_id = get_key_in_topics_dict(topic_record['fields']['Name'])
         if topic_id:
-            insert = mysql_table.insert().values(topic_id=topic_id, group_id=group_id)
-            insert_in_mysql(mysql_connection, insert)
+            i = insert(mysql_table).values(topic_id=topic_id, group_id=group_id)
+            insert_in_mysql(mysql_connection, i)
 
 
 def populate_service_link_table(mysql_connection, mysql_table, resources, airtable_resources_table, group_id):
@@ -259,13 +287,11 @@ def populate_service_link_table(mysql_connection, mysql_table, resources, airtab
             platform = 'Website'
         if platform == 'Main website':
             service_type = ServiceTypes.website
-            is_main_link = 1
         else:
             service_type = airtable_platforms_to_sql_enums.get(platform, 'Website')
-            is_main_link = 0
 
-        insert = mysql_table.insert().values(text=text_value, url=url, group_id=group_id, type=service_type, is_main_link=is_main_link)
-        insert_in_mysql(mysql_connection, insert)
+        i = insert(mysql_table).values(text=text_value, url=url, group_id=group_id, type=service_type)
+        insert_in_mysql(mysql_connection, i)
 
 
 def get_key_in_countries_dict(val):
@@ -284,7 +310,11 @@ def get_key_in_topics_dict(val):
 
 def insert_in_mysql(db_connection, insert):
     try:
-        result = db_connection.execute(insert)
+        upsert_dict = {x.name: x for x in insert.inserted}
+        on_conflict_stmt = insert.on_duplicate_key_update(
+            upsert_dict
+        )
+        result = db_connection.execute(on_conflict_stmt)
         return result.inserted_primary_key
     except SQLAlchemyError as sql_alchemy_exception:
         error = str(sql_alchemy_exception.__dict__['orig'])
